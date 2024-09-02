@@ -1,0 +1,5 @@
+com\aps\yinghai\entity\Ship.class
+com\aps\yinghai\entity\ShipForecast.class
+com\aps\yinghai\base\Result.class
+com\aps\yinghai\entity\BerthInfo.class
+com\aps\yinghai\entity\BollardInfo.class

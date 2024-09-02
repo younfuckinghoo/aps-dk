@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: aps-server
+  profiles:
+    active: @env@
+#  sql:
+#    init:
+#      schema-locations: classpath:SQL/baseDataDDL.sql
+#      data-locations: classpath:SQL/baseDataDML.sql
+
+
+server:
+  port: 8180
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html #/swagger-ui/index.html
+
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**.xml
+
+  configuration:
+    # MyBatis 配置
+    map-underscore-to-camel-case: true
+  global-config:
+    # 全局配置
+    db-config:
+      # 数据库配置
+      id-type: auto
+
+
+
+
+
