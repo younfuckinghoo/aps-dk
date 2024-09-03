@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -43,7 +45,7 @@ public class BollardInfo implements Serializable {
      * 缆桩编号
      */
     @TableField("BOLLARD_NO")
-    private String bollardNo;
+    private Integer bollardNo;
 
     /**
      * 缆桩名称
@@ -62,4 +64,10 @@ public class BollardInfo implements Serializable {
      */
     @TableField("LAST_BOLLARD_DISTANCE")
     private BigDecimal lastBollardDistance;
+
+    /**
+     * 占用到时间（到什么时候能用）
+     */
+    @TableField("OCCUPY_UNTIL")
+    private LocalDateTime occupyUntil;
 }

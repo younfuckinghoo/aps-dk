@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -68,4 +70,12 @@ public class BerthInfo implements Serializable {
      */
     @TableField("BERTH_LENGTH")
     private BigDecimal berthLength;
+
+    /**
+     * 是否可用
+     */
+    @TableField("AVAILABLE")
+    private Integer available;
+
+
 }

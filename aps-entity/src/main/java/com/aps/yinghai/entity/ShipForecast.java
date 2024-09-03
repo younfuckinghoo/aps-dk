@@ -58,19 +58,13 @@ public class ShipForecast implements Serializable {
     @Schema(name = "内外贸")
     private Integer inOutTrade;
 
-    /**
-     * 装卸类型
-     */
-    @TableField("LOAD_UNLOAD")
-    @Schema(name = "装卸类型")
-    private Integer loadUnload;
 
     /**
      * 装载量
      */
-    @TableField("LOAD_QTY")
+   /* @TableField("LOAD_QTY")
     @Schema(name = "装载量")
-    private Integer loadQty;
+    private Integer loadQty;*/
 
     /**
      * 抵港时间
@@ -123,4 +117,21 @@ public class ShipForecast implements Serializable {
     @TableField("CAPACITY_PER_HOUR")
     @Schema(name = "舱时量")
     private BigDecimal capacityPerHour;
+
+    /**
+     * 装卸类型
+     */
+    @TableField("LOAD_UNLOAD")
+    @Schema(name = "装卸类型")
+    private Integer loadUnload;
+
+    /**
+     * 船舶状态（1未就绪；2已就绪；3已作业；4作业完成）
+     */
+    @TableField("SHIP_STATUS")
+    @Schema(name = "船舶状态")
+    private Integer shipStatus;
+
+
+
 }

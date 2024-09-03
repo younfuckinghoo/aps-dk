@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -45,7 +46,7 @@ public class CabinInfo implements Serializable {
      * 装载量
      */
     @TableField("LOAD_QTY")
-    private Integer loadQty;
+    private BigDecimal loadQty;
 
     /**
      * 货种名称
