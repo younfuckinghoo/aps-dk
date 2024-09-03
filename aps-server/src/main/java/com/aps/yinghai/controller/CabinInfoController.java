@@ -1,9 +1,11 @@
 package com.aps.yinghai.controller;
 
 import com.aps.yinghai.base.Result;
-import com.aps.yinghai.entity.BerthInfo;
-import com.aps.yinghai.service.IBerthInfoService;
-import com.aps.yinghai.vo.BerthInfoPageVO;
+import com.aps.yinghai.entity.CabinInfo;
+import com.aps.yinghai.entity.ShipForecast;
+import com.aps.yinghai.service.ICabinInfoService;
+import com.aps.yinghai.vo.CabinInfoPageVO;
+import com.aps.yinghai.vo.ShipForecastPageVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,34 +24,34 @@ import java.util.List;
 
 /**
  * <p>
- * 泊位信息 前端控制器
+ * 舱口信息 前端控制器
  * </p>
  *
  * @author haoyong
- * @since 2024-09-02
+ * @since 2024-09-03
  */
+@Tag(name = "舱口信息")
 @RestController
-@RequestMapping("/berthInfo")
-@Tag(name = "泊位信息")
-public class BerthInfoController {
+@RequestMapping("/cabinInfo")
+public class CabinInfoController {
 
-    private final IBerthInfoService berthInfoService;
+    private final ICabinInfoService cabinInfoService;
 
-    public BerthInfoController(IBerthInfoService berthInfoService) {
-        this.berthInfoService = berthInfoService;
+    public CabinInfoController(ICabinInfoService cabinInfoService) {
+        this.cabinInfoService = cabinInfoService;
     }
 
     @Operation(summary = "获取数据列表")
     @PostMapping("list")
     @ApiResponse(responseCode = "200", description = "成功",
             content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = BerthInfo.class))})
-    public Result<List> list(@Parameter(name = "泊位分页数据") @RequestBody BerthInfoPageVO berthInfoPageVO) {
-        BerthInfo condition = berthInfoPageVO.getCondition();
-        LambdaQueryWrapper<BerthInfo> lambdaQueryWrapper = Wrappers.lambdaQuery(condition);
-        lambdaQueryWrapper.like(StringUtils.isNotBlank(condition.getBerthNo()), BerthInfo::getBerthNo, condition.getBerthNo());
-        List<BerthInfo> list = berthInfoService.list(berthInfoPageVO, lambdaQueryWrapper);
-        System.out.println("泊位分页列表" + list);
+                    schema = @Schema(implementation = CabinInfo.class))})
+    public Result<List> list(@Parameter(name = "船舶预报信息") @RequestBody CabinInfoPageVO cabinInfoPageVO){
+        CabinInfo condition = cabinInfoPageVO.getCondition();
+        LambdaQueryWrapper<CabinInfo> lambdaQueryWrapper = Wrappers.lambdaQuery(condition);
+        lambdaQueryWrapper.eq(condition.getShipId()!=null,CabinInfo::getShipId,condition.getShipId());
+        List<CabinInfo> list = cabinInfoService.list(cabinInfoPageVO,lambdaQueryWrapper);
+        System.out.println("舱口分页列表"+list);
         return Result.ok(list, List.class);
     }
 
@@ -57,10 +59,8 @@ public class BerthInfoController {
     @PostMapping("save")
     @ApiResponse(responseCode = "200", description = "成功",
             content = {@Content(mediaType = "application/json")})
-    public Result save(@Parameter(name = "泊位信息") @RequestBody BerthInfo berthInfo) {
-        this.berthInfoService.saveOrUpdate(berthInfo);
+    public Result save(@Parameter(name = "舱口信息") @RequestBody CabinInfo cabinInfo){
+        this.cabinInfoService.saveOrUpdate(cabinInfo);
         return Result.ok();
     }
-
-
 }

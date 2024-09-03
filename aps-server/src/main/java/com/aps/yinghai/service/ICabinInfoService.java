@@ -1,0 +1,16 @@
+package com.aps.yinghai.service;
+
+import com.aps.yinghai.entity.CabinInfo;
+import com.baomidou.mybatisplus.extension.service.IService;
+
+/**
+ * <p>
+ * 舱口信息 服务类
+ * </p>
+ *
+ * @author haoyong
+ * @since 2024-09-03
+ */
+public interface ICabinInfoService extends IService<CabinInfo> {
+
+}

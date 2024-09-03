@@ -12,8 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ApsServerApplication {
 
     public static void main(String[] args) {
-//        codeGen();
-        SpringApplication.run(ApsServerApplication.class, args);
+        codeGen();
+//        SpringApplication.run(ApsServerApplication.class, args);
     }
 
     public static void codeGen(){
@@ -32,7 +32,7 @@ public class ApsServerApplication {
                             .xml("mapper"); // 设置 Mapper XML 文件包名
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("BERTH_INFO","BOLLARD_INFO") // 设置需要生成的表名
+                    builder.addInclude("CABIN_INFO") // 设置需要生成的表名
                             .entityBuilder()
                             .enableLombok() // 启用 Lombok
                             .enableTableFieldAnnotation() // 启用字段注解

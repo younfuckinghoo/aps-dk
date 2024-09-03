@@ -50,7 +50,7 @@ public class BollardInfoController {
     public Result<List> list(@Parameter(name = "船舶预报信息") @RequestBody BollardInfoPageVO bollardInfoPageVO){
         BollardInfo condition = bollardInfoPageVO.getCondition();
         LambdaQueryWrapper<BollardInfo> lambdaQueryWrapper = Wrappers.lambdaQuery(condition);
-        lambdaQueryWrapper.like(StringUtils.isNotBlank(condition.getBollardNo()),BollardInfo::getBollardNo,condition.getBollardNo());
+        lambdaQueryWrapper.eq(condition.getBerthId()!=null,BollardInfo::getBerthId,condition.getBerthId());
         List<BollardInfo> list = bollardInfoService.list(bollardInfoPageVO,lambdaQueryWrapper);
         System.out.println("缆柱分页列表"+list);
         return Result.ok(list, List.class);

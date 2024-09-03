@@ -41,3 +41,14 @@ CREATE TABLE `BOLLARD_INFO` (
      PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 ALTER TABLE `aps`.`BOLLARD_INFO` COMMENT = '缆柱信息';
+
+
+CREATE TABLE `CABIN_INFO` (
+                                `ID` int NOT NULL AUTO_INCREMENT,
+                                `SHIP_ID` int DEFAULT NULL COMMENT '船舶ID',
+                                `CABIN_NO` int DEFAULT NULL COMMENT '舱号',
+                                `LOAD_QTY` int DEFAULT NULL COMMENT '装载量',
+                                `CARGO_NAME` varchar(255) DEFAULT NULL COMMENT '货种名称',
+                                PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+ALTER TABLE `aps`.`CABIN_INFO` COMMENT = '舱口信息';

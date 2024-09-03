@@ -11,7 +11,7 @@ public class MybatisPlusCodeGen {
         FastAutoGenerator.create("jdbc:mysql://192.168.8.241:3306/aps?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false", "aps_admin", "aps2024")
                 .globalConfig(builder -> {
                     builder.author("haoyong") // 设置作者
-                            .outputDir("src/main/java"); // 输出目录
+                            .outputDir("codegen\\src\\main\\java"); // 输出目录
                 })
                 .packageConfig(builder -> {
                     builder.parent("com.aps.yinghai") // 设置父包名
@@ -22,7 +22,7 @@ public class MybatisPlusCodeGen {
                             .xml("mapper"); // 设置 Mapper XML 文件包名
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("BERTH_INFO","BOLLARD_INFO") // 设置需要生成的表名
+                    builder.addInclude("CABIN_INFO") // 设置需要生成的表名
                             .entityBuilder()
                             .enableLombok() // 启用 Lombok
                             .enableTableFieldAnnotation() // 启用字段注解
