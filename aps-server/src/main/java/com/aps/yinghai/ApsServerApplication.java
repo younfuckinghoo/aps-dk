@@ -12,8 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ApsServerApplication {
 
     public static void main(String[] args) {
-        codeGen();
-//        SpringApplication.run(ApsServerApplication.class, args);
+//        codeGen();
+        SpringApplication.run(ApsServerApplication.class, args);
     }
 
     public static void codeGen(){
