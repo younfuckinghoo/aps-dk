@@ -9,8 +9,8 @@
 --                                  `SHIP_PROCEDURE` varchar(255) DEFAULT NULL COMMENT '船舶手续',
 --                                  `SHIP_LENGTH` decimal(7,2) DEFAULT NULL COMMENT '船长',
 --                                  `SHIP_WIDTH` decimal(7,2) DEFAULT NULL COMMENT '船宽',
---                                  `DRAFT` varchar(255) DEFAULT NULL COMMENT '抵港吃水',
---                                  `CAPACITY_PER_HOUR` decimal(6,2) DEFAULT NULL COMMENT '舱时量',
+--                                  `DRAFT` decimal(7,2) DEFAULT NULL COMMENT '抵港吃水',
+--                                  `CAPACITY_PER_HOUR` decimal(8,2) DEFAULT NULL COMMENT '舱时量',
 --                                  `LOAD_UNLOAD` int DEFAULT NULL COMMENT '装/卸',
 --                                  `SHIP_STATUS` int DEFAULT NULL COMMENT '船舶状态（1未就绪；2已就绪；3已作业；4作业完成）,
 --                                  PRIMARY KEY (`ID`)

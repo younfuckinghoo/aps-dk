@@ -1,5 +1,6 @@
 package com.aps.yinghai.service.impl;
 
+import com.aps.yinghai.constant.PlanConstant;
 import com.aps.yinghai.entity.ShipForecast;
 import com.aps.yinghai.enums.ShipStatusEnum;
 import com.aps.yinghai.mapper.ShipForecastMapper;
@@ -23,9 +24,14 @@ import java.util.List;
 public class ShipForecastServiceImpl extends ServiceImpl<ShipForecastMapper, ShipForecast> implements IShipForecastService {
 
     @Override
-    public List<ShipForecast> listNotPlanningShip() {
+    public List<ShipForecast> listNotPlanningShip(Integer absentProcedure) {
         LambdaQueryWrapper<ShipForecast> lambdaQueryWrapper = Wrappers.lambdaQuery(ShipForecast.class);
-        lambdaQueryWrapper.lt(ShipForecast::getShipStatus, ShipStatusEnum.WORKING);
+        lambdaQueryWrapper.lt(ShipForecast::getShipStatus, ShipStatusEnum.WORKING.getCode());
+        // 控制如果缺手续不能排
+        if (absentProcedure == PlanConstant.NO){
+            lambdaQueryWrapper.eq(ShipForecast::getShipProcedure,PlanConstant.YES)
+                    .eq(ShipForecast::getCargoProcedure,PlanConstant.YES);
+        }
         lambdaQueryWrapper.orderByAsc(ShipForecast::getExceptArriveTime);
         return this.list(lambdaQueryWrapper);
     }

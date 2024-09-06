@@ -52,7 +52,7 @@ public class ShipForecast implements Serializable {
     private String shipNo;
 
     /**
-     * 内外贸
+     * 内外贸(1内贸；2外贸)
      */
     @TableField("IN_OUT_TRADE")
     @Schema(name = "内外贸")
@@ -109,7 +109,7 @@ public class ShipForecast implements Serializable {
      */
     @TableField("DRAFT")
     @Schema(name = "抵港吃水")
-    private String draft;
+    private BigDecimal draft;
 
     /**
      * 舱时量

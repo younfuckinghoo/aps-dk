@@ -18,6 +18,7 @@ public interface IShipForecastService extends IService<ShipForecast> {
     /**
      * 查找未排产的船
      * @return
+     * @param includeAbsentProcedure
      */
-    List<ShipForecast> listNotPlanningShip();
+    List<ShipForecast> listNotPlanningShip(Integer includeAbsentProcedure);
 }

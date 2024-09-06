@@ -1,5 +1,6 @@
 package com.aps.yinghai.entity;
 
+import com.aps.yinghai.dto.PlanningBollardDTO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -22,7 +23,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @TableName("bollard_info")
-public class BollardInfo implements Serializable {
+public class BollardInfo implements Serializable,Cloneable {
 
     private static final long serialVersionUID = 1L;
 
@@ -70,4 +71,13 @@ public class BollardInfo implements Serializable {
      */
     @TableField("OCCUPY_UNTIL")
     private LocalDateTime occupyUntil;
+
+    public Object clone()throws CloneNotSupportedException {
+        BollardInfo bollardInfo = (BollardInfo) super.clone();
+        if (bollardInfo.getOccupyUntil()!=null)
+            bollardInfo.setOccupyUntil(bollardInfo.getOccupyUntil().plusSeconds(0));
+        return bollardInfo;
+    }
+
+
 }

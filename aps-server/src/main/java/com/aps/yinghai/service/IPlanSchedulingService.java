@@ -10,8 +10,9 @@ public interface IPlanSchedulingService {
     /**
      * 长期计划排产
      * @return
+     * @param includeAbsentProcedure 是否可以缺手续
      */
-    List longTermScheduling();
+    List longTermScheduling(Integer includeAbsentProcedure);
 
     /**
      * 昼夜计划排产

@@ -22,8 +22,8 @@ springdoc:
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**.xml
-
   configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     # MyBatis 配置
     map-underscore-to-camel-case: true
   global-config:
