@@ -55,3 +55,39 @@ CREATE TABLE `CABIN_INFO` (
                                 PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 ALTER TABLE `aps`.`CABIN_INFO` COMMENT = '舱口信息';
+
+
+CREATE TABLE `aps`.`TIDE`  (
+   `ID` int NOT NULL AUTO_INCREMENT,
+   `TIDE_DATE` date NULL COMMENT '日期',
+   `FLOW_FIRST` timestamp NULL COMMENT '第一次涨潮',
+   `EBB_FIRST` timestamp NULL COMMENT '第一次落潮',
+   `FLOW_SECOND` timestamp NULL COMMENT '第二次涨潮',
+   `EBB_SECOND` timestamp NULL COMMENT '第二次落潮',
+   `AT_0` int NULL COMMENT '0时潮高',
+   `AT_1` int NULL COMMENT '1时潮高',
+   `AT_2` int NULL COMMENT '2时潮高',
+   `AT_3` int NULL COMMENT '3时潮高',
+   `AT_4` int NULL COMMENT '4时潮高',
+   `AT_5` int NULL COMMENT '5时潮高',
+   `AT_6` int NULL COMMENT '6时潮高',
+   `AT_7` int NULL COMMENT '7时潮高',
+   `AT_8` int NULL COMMENT '8时潮高',
+   `AT_9` int NULL COMMENT '9时潮高',
+   `AT_10` int NULL COMMENT '10时潮高',
+   `AT_11` int NULL COMMENT '11时潮高',
+   `AT_12` int NULL COMMENT '12时潮高',
+   `AT_13` int NULL COMMENT '13时潮高',
+   `AT_14` int NULL COMMENT '14时潮高',
+   `AT_15` int NULL COMMENT '15时潮高',
+   `AT_16` int NULL COMMENT '16时潮高',
+   `AT_17` int NULL COMMENT '17时潮高',
+   `AT_18` int NULL COMMENT '18时潮高',
+   `AT_19` int NULL COMMENT '19时潮高',
+   `AT_20` int NULL COMMENT '20时潮高',
+   `AT_21` int NULL COMMENT '21时潮高',
+   `AT_22` int NULL COMMENT '22时潮高',
+   `AT_23` int NULL COMMENT '23时潮高',
+
+   PRIMARY KEY (`ID`)
+);

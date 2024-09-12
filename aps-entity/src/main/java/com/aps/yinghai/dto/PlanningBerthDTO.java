@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-@JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="id")
+//@JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id",scope = PlanningBerthDTO.class)
 @Data
 public class PlanningBerthDTO {
 
@@ -68,7 +68,7 @@ public class PlanningBerthDTO {
                 occupiedAmount = 0;
                 plan:
                 for (int j = i; j < cloneBollardList.size(); j++) {
-                    PlanningBollardDTO freeBollard = cloneBollardList.get(i);
+                    PlanningBollardDTO freeBollard = cloneBollardList.get(j);
                     // 不管是被占用还是未被占用，都先加上
                     candidateBollardList.add(freeBollard);
                     // 累积缆柱长度 但是一般不累加第一个榄桩的长度 因为如果要累加第一个榄桩的长度需要将船排到前一个泊位
@@ -178,7 +178,11 @@ public class PlanningBerthDTO {
     private boolean trySniffBackward(BigDecimal shipRequireLength, List<PlanningBollardDTO> candidateBollardList, PlanningShipDTO shipDTO) {
         if (!CollectionUtils.isEmpty(candidateBollardList) && this.hasNextBerth()){
             // 所选的第一个榄桩的距离一般不算
-            BigDecimal totalLength = candidateBollardList.stream().skip(1).map(t->t.getBollardInfo().getLastBollardDistance()).reduce((b1,b2)->b1.add(b2)).get();
+            Optional<BigDecimal> optional = candidateBollardList.stream().map(t -> t.getBollardInfo().getLastBollardDistance()).reduce((b1, b2) -> b1.add(b2));
+            if (!optional.isPresent() || optional.get().compareTo(BigDecimal.ZERO)<=0) {
+                return false;
+            }
+            BigDecimal totalLength = optional.get();
             PlanningBollardDTO lastCandidate = candidateBollardList.get(candidateBollardList.size()-1);
             // 如果是最后一个榄柱才能允许向后一个泊位嗅探缆柱
             if (isLastBollard(lastCandidate.getBollardInfo().getId())){

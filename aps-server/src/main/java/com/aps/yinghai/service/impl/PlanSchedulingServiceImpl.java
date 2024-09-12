@@ -63,8 +63,14 @@ public class PlanSchedulingServiceImpl implements IPlanSchedulingService {
         // 获取每个泊位的缆柱
         Map<Integer, List<BollardInfo>> bollardListMap = this.listBollardByShip(berthInfoList);
 
-        return this.planningLongTerm(startTime, shipForecastList, cabinListMap, berthInfoList, bollardListMap);
-
+        List<PlanningShipDTO> shipDTOList = this.planningLongTerm(startTime, shipForecastList, cabinListMap, berthInfoList, bollardListMap);
+        shipDTOList.forEach(t->{
+            if (t.isPlaned() && t.getOccupiedBerth()!=null) {
+                t.getOccupiedBerth().setPreBerth(null);
+                t.getOccupiedBerth().setNextBerth(null);
+            }
+        });
+        return shipDTOList;
     }
 
     private List<PlanningShipDTO> planningLongTerm(LocalDateTime startTime,

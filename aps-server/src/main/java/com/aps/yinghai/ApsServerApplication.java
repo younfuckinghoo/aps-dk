@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 
+@EnableAspectJAutoProxy
 @MapperScan("com.aps.yinghai.mapper")
 @SpringBootApplication
 public class ApsServerApplication {
@@ -32,7 +34,7 @@ public class ApsServerApplication {
                             .xml("mapper"); // 设置 Mapper XML 文件包名
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("CABIN_INFO") // 设置需要生成的表名
+                    builder.addInclude("TIDE") // 设置需要生成的表名
                             .entityBuilder()
                             .enableLombok() // 启用 Lombok
                             .enableTableFieldAnnotation() // 启用字段注解

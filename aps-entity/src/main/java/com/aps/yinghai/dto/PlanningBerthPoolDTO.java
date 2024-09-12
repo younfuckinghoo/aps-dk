@@ -20,9 +20,9 @@ public class PlanningBerthPoolDTO {
     public PlanningBerthPoolDTO(List<PlanningBerthDTO> berthDTOList) {
         this.berthDTOList = berthDTOList;
         // 设置前后泊位
-        for (int i = 0; i < berthDTOList.size(); i++) {
+        for (int i = 1; i < berthDTOList.size(); i++) {
             PlanningBerthDTO currentBerth = berthDTOList.get(i);
-            if (i>0){
+            if (i>1){
                 PlanningBerthDTO pre = berthDTOList.get(i - 1);
                 currentBerth.setPreBerth(pre);
             }
