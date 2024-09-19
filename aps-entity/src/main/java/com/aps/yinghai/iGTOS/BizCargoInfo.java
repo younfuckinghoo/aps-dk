@@ -1,6 +1,7 @@
 package com.aps.yinghai.iGTOS;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -11,7 +12,8 @@ import java.math.BigDecimal;
 public class BizCargoInfo extends BizBaseEntity {
 
 
-
+    @TableId("ID")
+    private String id;
     /**
      * 货名
      */
@@ -26,4 +28,15 @@ public class BizCargoInfo extends BizBaseEntity {
 
 
 
+    /**
+     * 是否删除
+     */
+    @TableField("IS_DELETE")
+    private Integer isDelete;
+
+    /**
+     * 类型 3 三级货类
+     */
+    @TableField("CARGO_NAME_TYPE")
+    private Integer cargoNameType;
 }

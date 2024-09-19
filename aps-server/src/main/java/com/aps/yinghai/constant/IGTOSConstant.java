@@ -7,5 +7,14 @@ public interface IGTOSConstant {
         Integer TO_BE_PRE_PLAN = 7;
     }
 
+    // 已删除
+    int DELETE_YES = 1;
+    // 未删除
+    int DELETE_NO = 0;
+
+    interface CargoType{
+        int THIRD_CLASS = 3;
+    }
+
 
 }

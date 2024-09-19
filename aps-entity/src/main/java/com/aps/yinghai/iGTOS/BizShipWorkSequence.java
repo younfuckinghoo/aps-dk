@@ -1,6 +1,7 @@
 package com.aps.yinghai.iGTOS;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -10,6 +11,8 @@ import java.math.BigDecimal;
 @TableName("BIZ_SHIP_PRE_PLAN_CABIN_RELATION")
 public class BizShipWorkSequence extends BizBaseEntity {
 
+    @TableId("ID")
+    private String id;
     /**
      * 父表id
      */
@@ -20,7 +23,7 @@ public class BizShipWorkSequence extends BizBaseEntity {
      * 票序
      */
     @TableField("TICKET_NUM")
-    private String ticketNum;
+    private Integer ticketNum;
 
     /**
      * 货物名称
@@ -41,13 +44,13 @@ public class BizShipWorkSequence extends BizBaseEntity {
      * 总重（调度室手工录入）
      */
     @TableField("TOTAL_WEIGHT")
-    private String totalWeight;
+    private BigDecimal totalWeight;
 
     /**
      * 单机舱时量（调度室手工录入）
      */
     @TableField("SINGLE_SHIP_WORK_HOUR_QTY")
-    private String singleShipWorkHourQty;
+    private BigDecimal singleShipWorkHourQty;
 
 
 }

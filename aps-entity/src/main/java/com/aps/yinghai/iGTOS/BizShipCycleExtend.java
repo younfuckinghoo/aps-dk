@@ -1,6 +1,7 @@
 package com.aps.yinghai.iGTOS;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -11,7 +12,6 @@ import java.time.LocalDateTime;
 @Data
 @TableName("BIZ_SHIPCYCLE_EXPAND")
 public class BizShipCycleExtend extends BizBaseEntity {
-
 
     /**
      * SHIPCYCLE_ID

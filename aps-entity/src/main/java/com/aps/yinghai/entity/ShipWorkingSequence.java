@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
@@ -54,13 +55,13 @@ public class ShipWorkingSequence extends BaseEntity implements Serializable {
      * 总重（调度室手工录入）
      */
     @TableField("TOTAL_WEIGHT")
-    private String totalWeight;
+    private BigDecimal totalWeight;
 
     /**
      * 单机舱时量（调度室手工录入）
      */
     @TableField("SINGLE_SHIP_WORK_HOUR_QTY")
-    private String singleShipWorkHourQty;
+    private BigDecimal singleShipWorkHourQty;
 
 
 }

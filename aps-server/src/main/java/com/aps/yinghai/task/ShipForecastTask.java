@@ -162,13 +162,18 @@ public class ShipForecastTask {
             List<ShipWorkingSequence> workingSequenceList = bizShipWorkSequences.stream().map(t -> {
                 ShipWorkingSequence shipWorkingSequence = new ShipWorkingSequence();
                 shipWorkingSequence.setId(t.getId());
-                shipWorkingSequence.setShipCabinNo(t.get);
+                shipWorkingSequence.setShipCabinNo(t.getShipCabinNo());
                 shipWorkingSequence.setShipForecastId(t.getShipPrePlanId());
-
+                shipWorkingSequence.setSingleShipWorkHourQty(t.getSingleShipWorkHourQty());
+                shipWorkingSequence.setTotalWeight(t.getTotalWeight());
+                shipWorkingSequence.setCreateDate(t.getCreateDate());
+                shipWorkingSequence.setReviseDate(t.getReviseDate());
                 return shipWorkingSequence;
             }).collect(Collectors.toList());
-
+            shipWorkingInfoDetailMapper.insert(workingInfoDetailList);
+            shipWorkingSequenceMapper.insert(workingSequenceList);
         }
+
 
         iShipForecastService.saveBatch(shipForecastList);
 

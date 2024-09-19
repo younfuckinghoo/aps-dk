@@ -1,6 +1,7 @@
 package com.aps.yinghai.iGTOS;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -10,6 +11,8 @@ import java.math.BigDecimal;
 @TableName("DIC_BOLLARD_INFO")
 public class BizBollardInfo extends BizBaseEntity {
 
+    @TableId("ID")
+    private String id;
     /**
      * 泊位ID
      */

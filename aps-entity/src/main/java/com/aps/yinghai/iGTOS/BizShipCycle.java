@@ -1,6 +1,7 @@
 package com.aps.yinghai.iGTOS;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -13,6 +14,8 @@ public class BizShipCycle extends BizBaseEntity {
 
 
 
+    @TableId("SHIPCYCLE_ID")
+    private String id;
 
     /**
      * 中文名
@@ -104,6 +107,11 @@ public class BizShipCycle extends BizBaseEntity {
      */
     @TableField("HGFXZT_ISRELEASE")
     private Integer hgfxztIsrelease;
+    /**
+     * 舱口数
+     */
+    @TableField("SHIPCABIN_QTY")
+    private Integer shipcabinQty;
 
     /**
      * 抵港时间（预抵时间，经常更新）

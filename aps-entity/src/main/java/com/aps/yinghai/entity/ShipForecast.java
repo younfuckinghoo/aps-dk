@@ -73,7 +73,11 @@ public class ShipForecast extends BaseEntity implements Serializable {
     @Schema(name = "载重吨")
     private BigDecimal deadweightTon;
 
-
+    /**
+     * 舱口数
+     */
+    @TableField("SHIPCABIN_QTY")
+    private Integer shipcabinQty;
 
     /**
      * 货物手续

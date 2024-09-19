@@ -1,6 +1,7 @@
 package com.aps.yinghai.iGTOS;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -12,6 +13,8 @@ import java.time.LocalDateTime;
 @TableName("BIZ_SHIP_PRE_PLAN")
 public class BizShipPrePlan extends BizBaseEntity {
 
+    @TableId("ID")
+    private String id;
 
     /**
      * 算法状态

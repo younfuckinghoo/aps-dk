@@ -16,10 +16,11 @@ public class BizTide  implements Serializable {
     private static final long serialVersionUID = 1L;
 
 
-    @TableId
+    @TableId("ID")
     private String id;
 
-    private String date;
+    @TableField("TIDE_DATE")
+    private String tideDate;
 
     private String h0;
 

@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @Setter
 public abstract class BizBaseEntity {
 
-    @TableId
-    private String id;
 
     /**
      * 创建时间

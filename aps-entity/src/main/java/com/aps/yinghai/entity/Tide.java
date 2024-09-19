@@ -32,7 +32,8 @@ public class Tide implements Serializable {
     @TableId(value = "ID", type = IdType.ASSIGN_UUID)
     private String id;
 
-    private LocalDate date;
+    @TableField("TIDE_DATE")
+    private String tideDate;
 
     private BigDecimal h0;
 
