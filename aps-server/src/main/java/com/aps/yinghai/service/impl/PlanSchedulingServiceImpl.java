@@ -55,15 +55,15 @@ public class PlanSchedulingServiceImpl implements IPlanSchedulingService {
         List<ShipForecast> shipForecastList = iShipForecastService.listNotPlanningShip(absentProcedure);
 
         // 获取每个船的舱
-        Map<Integer, List<CabinInfo>> cabinListMap = this.listCabinByShip(shipForecastList);
+//        Map<String, List<CabinInfo>> cabinListMap = this.listCabinByShip(shipForecastList);
 
         // 获取泊位列表
         List<BerthInfo> berthInfoList = iBerthInfoService.list(Wrappers.lambdaQuery(BerthInfo.class).eq(BerthInfo::getAvailable, PlanConstant.YES));
 
         // 获取每个泊位的缆柱
-        Map<Integer, List<BollardInfo>> bollardListMap = this.listBollardByShip(berthInfoList);
+        Map<String, List<BollardInfo>> bollardListMap = this.listBollardByShip(berthInfoList);
 
-        List<PlanningShipDTO> shipDTOList = this.planningLongTerm(startTime, shipForecastList, cabinListMap, berthInfoList, bollardListMap);
+        List<PlanningShipDTO> shipDTOList = this.planningLongTerm(startTime, shipForecastList, berthInfoList, bollardListMap);
         shipDTOList.forEach(t->{
             if (t.isPlaned() && t.getOccupiedBerth()!=null) {
                 t.getOccupiedBerth().setPreBerth(null);
@@ -75,12 +75,11 @@ public class PlanSchedulingServiceImpl implements IPlanSchedulingService {
 
     private List<PlanningShipDTO> planningLongTerm(LocalDateTime startTime,
                                                    List<ShipForecast> shipForecastList,
-                                                   Map<Integer, List<CabinInfo>> cabinListMap,
                                                    List<BerthInfo> berthInfoList,
-                                                   Map<Integer, List<BollardInfo>> bollardListMap) {
+                                                   Map<String, List<BollardInfo>> bollardListMap) {
         // 包装初始化船舶
         List<PlanningShipDTO> shipDTOList = shipForecastList.stream()
-                .map(t -> PlanningShipDTO.packageShip(t, cabinListMap.get(t.getId()), startTime))
+                .map(t -> PlanningShipDTO.packageShip(t,  startTime))
                 .collect(Collectors.toList());
 
 
@@ -96,13 +95,13 @@ public class PlanSchedulingServiceImpl implements IPlanSchedulingService {
             LocalDateTime planningTime = startTime.plusHours(index);
             logger.info("正在排产时间：{}",planningTime);
             // 找到在此刻之前已经到港的未排的船
-            List<PlanningShipDTO> availableShipList = shipDTOList.stream().filter(t -> t.getShipForecast().getExceptArriveTime().isBefore(planningTime) && !t.isPlaned()).collect(Collectors.toList());
+            List<PlanningShipDTO> availableShipList = shipDTOList.stream().filter(t -> t.getShipForecast().getExpectArriveTime().isBefore(planningTime) && !t.isPlaned()).collect(Collectors.toList());
 
             // 筛选出大于300米的
             List<PlanningShipDTO> shipMoreThan300 = availableShipList.stream().filter(t -> t.lengthMoreThan300()).sorted((s1, s2) -> s2.getTotalQty().compareTo(s1.getTotalQty())).collect(Collectors.toList());
             // 小于300米的
             List<PlanningShipDTO> shipLessThan300 = availableShipList.stream().filter(t -> !t.lengthMoreThan300()).sorted((s1, s2) -> {
-                int compare = s1.getShipForecast().getExceptArriveTime().compareTo(s1.getShipForecast().getExceptArriveTime());
+                int compare = s1.getShipForecast().getExpectArriveTime().compareTo(s1.getShipForecast().getExpectArriveTime());
                 if (compare==0){
                     return s2.getTotalQty().compareTo(s1.getTotalQty());
                 }
@@ -192,18 +191,18 @@ public class PlanSchedulingServiceImpl implements IPlanSchedulingService {
 
     }
 
-    private Map<Integer, List<BollardInfo>> listBollardByShip(List<BerthInfo> berthInfoList) {
-        List<Integer> berthIdList = berthInfoList.stream().map(t -> t.getId()).collect(Collectors.toList());
+    private Map<String, List<BollardInfo>> listBollardByShip(List<BerthInfo> berthInfoList) {
+        List<String> berthIdList = berthInfoList.stream().map(t -> t.getId()).collect(Collectors.toList());
         List<BollardInfo> bollardInfoList = iBollardInfoService.listBollardByBerthIdList(berthIdList);
-        Map<Integer, List<BollardInfo>> listMap = bollardInfoList.stream().collect(Collectors.groupingBy(t -> t.getBerthId(), Collectors.toList()));
+        Map<String, List<BollardInfo>> listMap = bollardInfoList.stream().collect(Collectors.groupingBy(t -> t.getBerthId(), Collectors.toList()));
         return listMap;
 
     }
 
-    private Map<Integer, List<CabinInfo>> listCabinByShip(List<ShipForecast> shipForecastList) {
-        List<Integer> shipIdList = shipForecastList.stream().map(t -> t.getId()).collect(Collectors.toList());
+    private Map<String, List<CabinInfo>> listCabinByShip(List<ShipForecast> shipForecastList) {
+        List<String> shipIdList = shipForecastList.stream().map(t -> t.getId()).collect(Collectors.toList());
         List<CabinInfo> cabinInfoList = iCabinInfoService.listCabinByShipIdList(shipIdList);
-        Map<Integer, List<CabinInfo>> listMap = cabinInfoList.stream().collect(Collectors.groupingBy(t -> t.getShipId(), Collectors.toList()));
+        Map<String, List<CabinInfo>> listMap = cabinInfoList.stream().collect(Collectors.groupingBy(t -> t.getShipId(), Collectors.toList()));
         return listMap;
     }
 

@@ -14,8 +14,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 public class ApsServerApplication {
 
     public static void main(String[] args) {
-//        codeGen();
-        SpringApplication.run(ApsServerApplication.class, args);
+        codeGen();
+//        SpringApplication.run(ApsServerApplication.class, args);
     }
 
     public static void codeGen(){
@@ -34,7 +34,7 @@ public class ApsServerApplication {
                             .xml("mapper"); // 设置 Mapper XML 文件包名
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("TIDE") // 设置需要生成的表名
+                    builder.addInclude("CARGO_INFO","SHIP_FORECAST","SHIP_TYPE","SHIP_WORKING_INFO_DETAIL","SHIP_WORKING_SEQUENCE") // 设置需要生成的表名
                             .entityBuilder()
                             .enableLombok() // 启用 Lombok
                             .enableTableFieldAnnotation() // 启用字段注解

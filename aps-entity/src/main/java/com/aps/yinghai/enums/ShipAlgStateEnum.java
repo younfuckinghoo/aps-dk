@@ -3,7 +3,7 @@ package com.aps.yinghai.enums;
 import com.aps.yinghai.base.BaseEnum;
 import com.aps.yinghai.exception.NotFindEnumException;
 
-public enum ShipStatusEnum implements BaseEnum {
+public enum ShipAlgStateEnum implements BaseEnum {
     NOT_READY(1,"未就绪"),
     READY(2,"已就绪"),
     WORKING(3,"作业中"),
@@ -13,7 +13,7 @@ public enum ShipStatusEnum implements BaseEnum {
     private int code;
     private String name;
 
-    ShipStatusEnum(int code, String name){
+    ShipAlgStateEnum(int code, String name){
         this.code = code;
         this.name = name;
     }
@@ -28,9 +28,9 @@ public enum ShipStatusEnum implements BaseEnum {
         return name;
     }
 
-    public static ShipStatusEnum getInstanceByCode(int code){
-        ShipStatusEnum[] values = ShipStatusEnum.values();
-        for (ShipStatusEnum value : values) {
+    public static ShipAlgStateEnum getInstanceByCode(int code){
+        ShipAlgStateEnum[] values = ShipAlgStateEnum.values();
+        for (ShipAlgStateEnum value : values) {
             if (value.getCode() == code)
                 return value;
         }

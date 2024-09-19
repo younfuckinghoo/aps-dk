@@ -15,5 +15,5 @@ import java.util.List;
  */
 public interface IBollardInfoService extends IService<BollardInfo> {
 
-    List<BollardInfo> listBollardByBerthIdList(List<Integer> berthIdList);
+    List<BollardInfo> listBollardByBerthIdList(List<String> berthIdList);
 }

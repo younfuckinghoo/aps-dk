@@ -15,5 +15,5 @@ import java.util.List;
  */
 public interface ICabinInfoService extends IService<CabinInfo> {
 
-    List<CabinInfo> listCabinByShipIdList(List<Integer> shipIdList);
+    List<CabinInfo> listCabinByShipIdList(List<String> shipIdList);
 }

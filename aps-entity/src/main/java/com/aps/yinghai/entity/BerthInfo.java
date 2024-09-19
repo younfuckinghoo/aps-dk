@@ -1,5 +1,6 @@
 package com.aps.yinghai.entity;
 
+import com.aps.yinghai.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -21,13 +22,11 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName("berth_info")
-public class BerthInfo implements Serializable {
+@TableName("ALG_BERTH_INFO")
+public class BerthInfo extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "ID", type = IdType.AUTO)
-    private Integer id;
 
     /**
      * 泊位编号
@@ -76,6 +75,18 @@ public class BerthInfo implements Serializable {
      */
     @TableField("AVAILABLE")
     private Integer available;
+
+    /**
+     * 是否借用
+     */
+    @TableField("IS_LEND")
+    private Integer isLend;
+
+    /**
+     * 是否被借用
+     */
+    @TableField("IS_BE_LEND")
+    private Integer isBeLend;
 
 
 }

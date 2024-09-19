@@ -18,17 +18,14 @@ import java.util.Optional;
 public class PlanningShipDTO {
     private ShipForecast shipForecast;
     /**
-     * 所有舱口之和 总吨数
+     * 载重吨数
      */
     private BigDecimal totalQty;
     /**
      * 计划吨数
      */
     private BigDecimal planningQty;
-    /**
-     * 舱口列表
-     */
-    private List<CabinInfo> cabinInfoList;
+
     /**
      * 是否已排
      */
@@ -63,18 +60,21 @@ public class PlanningShipDTO {
     // 就绪时间 可以安排靠泊
     private LocalDateTime readyTime;
 
-    public static PlanningShipDTO packageShip(ShipForecast shipForecast, List<CabinInfo> cabinInfoList, LocalDateTime startTime){
+    public static PlanningShipDTO packageShip(ShipForecast shipForecast,  LocalDateTime startTime){
         PlanningShipDTO planningShipDTO = new PlanningShipDTO();
         planningShipDTO.setShipForecast(shipForecast);
-        planningShipDTO.setCabinInfoList(cabinInfoList);
-        Optional<BigDecimal> reduce = cabinInfoList.stream().map(t -> t.getLoadQty()).reduce((a, b) -> a.add(b));
-        reduce.ifPresentOrElse(b->planningShipDTO.setTotalQty(b),()->planningShipDTO.setTotalQty(BigDecimal.ZERO));
 
         // 准备好的时间 如果有提前好几天来的船那么就绪时间为排产开始时间否则为船舶实际的抵港时间
-        if (shipForecast.getExceptArriveTime().isBefore(startTime)){
+        if (shipForecast.getExpectArriveTime().isBefore(startTime)){
             planningShipDTO.readyTime = startTime;
         }else{
-            planningShipDTO.readyTime = shipForecast.getExceptArriveTime();
+            planningShipDTO.readyTime = shipForecast.getExpectArriveTime();
+        }
+        // 优先考虑来自于船期预报的载重吨
+        if (shipForecast.getDeadweightTon()==null){
+            planningShipDTO.setTotalQty( shipForecast.getLoadQty());
+        }else{
+            planningShipDTO.setTotalQty(shipForecast.getDeadweightTon());
         }
         return planningShipDTO;
     }

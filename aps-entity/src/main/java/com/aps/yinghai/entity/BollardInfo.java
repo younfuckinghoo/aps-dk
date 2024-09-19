@@ -1,5 +1,6 @@
 package com.aps.yinghai.entity;
 
+import com.aps.yinghai.base.BaseEntity;
 import com.aps.yinghai.dto.PlanningBollardDTO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -22,19 +23,17 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName("bollard_info")
-public class BollardInfo implements Serializable,Cloneable {
+@TableName("ALG_BOLLARD_INFO")
+public class BollardInfo extends BaseEntity implements Serializable,Cloneable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "ID", type = IdType.AUTO)
-    private Integer id;
 
     /**
      * 泊位ID
      */
     @TableField("BERTH_ID")
-    private Integer berthId;
+    private String berthId;
 
     /**
      * 泊位编号
@@ -65,6 +64,14 @@ public class BollardInfo implements Serializable,Cloneable {
      */
     @TableField("LAST_BOLLARD_DISTANCE")
     private BigDecimal lastBollardDistance;
+
+
+
+    /**
+     * 是否可用
+     */
+    @TableField("AVAILABLE")
+    private Integer available;
 
     /**
      * 占用到时间（到什么时候能用）

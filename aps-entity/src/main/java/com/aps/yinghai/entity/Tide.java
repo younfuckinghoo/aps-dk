@@ -1,12 +1,16 @@
 package com.aps.yinghai.entity;
 
+import com.aps.yinghai.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,185 +24,79 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName("tide")
+@TableName("ALG_TIDE")
 public class Tide implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "ID", type = IdType.AUTO)
-    private Integer id;
+    @TableId(value = "ID", type = IdType.ASSIGN_UUID)
+    private String id;
 
-    /**
-     * 日期
-     */
-    @TableField("TIDE_DATE")
-    private LocalDate tideDate;
+    private LocalDate date;
 
-    /**
-     * 第一次涨潮
-     */
-    @TableField("FLOW_FIRST")
-    private LocalDateTime flowFirst;
+    private BigDecimal h0;
 
-    /**
-     * 第一次落潮
-     */
-    @TableField("EBB_FIRST")
-    private LocalDateTime ebbFirst;
+    private BigDecimal h1;
 
-    /**
-     * 第二次涨潮
-     */
-    @TableField("FLOW_SECOND")
-    private LocalDateTime flowSecond;
+    private BigDecimal h2;
 
-    /**
-     * 第二次落潮
-     */
-    @TableField("EBB_SECOND")
-    private LocalDateTime ebbSecond;
+    private BigDecimal h3;
 
-    /**
-     * 0时潮高
-     */
-    @TableField("AT_0")
-    private Integer at0;
+    private BigDecimal h4;
 
-    /**
-     * 1时潮高
-     */
-    @TableField("AT_1")
-    private Integer at1;
+    private BigDecimal h5;
 
-    /**
-     * 2时潮高
-     */
-    @TableField("AT_2")
-    private Integer at2;
+    private BigDecimal h6;
 
-    /**
-     * 3时潮高
-     */
-    @TableField("AT_3")
-    private Integer at3;
+    private BigDecimal h7;
 
-    /**
-     * 4时潮高
-     */
-    @TableField("AT_4")
-    private Integer at4;
+    private BigDecimal h8;
 
-    /**
-     * 5时潮高
-     */
-    @TableField("AT_5")
-    private Integer at5;
+    private BigDecimal h9;
 
-    /**
-     * 6时潮高
-     */
-    @TableField("AT_6")
-    private Integer at6;
+    private BigDecimal h10;
 
-    /**
-     * 7时潮高
-     */
-    @TableField("AT_7")
-    private Integer at7;
+    private BigDecimal h11;
 
-    /**
-     * 8时潮高
-     */
-    @TableField("AT_8")
-    private Integer at8;
+    private BigDecimal h12;
 
-    /**
-     * 9时潮高
-     */
-    @TableField("AT_9")
-    private Integer at9;
+    private BigDecimal h13;
 
-    /**
-     * 10时潮高
-     */
-    @TableField("AT_10")
-    private Integer at10;
+    private BigDecimal h14;
 
-    /**
-     * 11时潮高
-     */
-    @TableField("AT_11")
-    private Integer at11;
+    private BigDecimal h15;
 
-    /**
-     * 12时潮高
-     */
-    @TableField("AT_12")
-    private Integer at12;
+    private BigDecimal h16;
 
-    /**
-     * 13时潮高
-     */
-    @TableField("AT_13")
-    private Integer at13;
+    private BigDecimal h17;
 
-    /**
-     * 14时潮高
-     */
-    @TableField("AT_14")
-    private Integer at14;
+    private BigDecimal h18;
 
-    /**
-     * 15时潮高
-     */
-    @TableField("AT_15")
-    private Integer at15;
+    private BigDecimal h19;
 
-    /**
-     * 16时潮高
-     */
-    @TableField("AT_16")
-    private Integer at16;
+    private BigDecimal h20;
 
-    /**
-     * 17时潮高
-     */
-    @TableField("AT_17")
-    private Integer at17;
+    private BigDecimal h21;
 
-    /**
-     * 18时潮高
-     */
-    @TableField("AT_18")
-    private Integer at18;
+    private BigDecimal h22;
 
-    /**
-     * 19时潮高
-     */
-    @TableField("AT_19")
-    private Integer at19;
+    private BigDecimal h23;
 
-    /**
-     * 20时潮高
-     */
-    @TableField("AT_20")
-    private Integer at20;
+    private BigDecimal tideHeight1;
 
-    /**
-     * 21时潮高
-     */
-    @TableField("AT_21")
-    private Integer at21;
+    private BigDecimal tideHeight2;
 
-    /**
-     * 22时潮高
-     */
-    @TableField("AT_22")
-    private Integer at22;
+    private BigDecimal tideHeight3;
 
-    /**
-     * 23时潮高
-     */
-    @TableField("AT_23")
-    private Integer at23;
+    private BigDecimal tideHeight4;
+
+    private LocalTime tideTime1;
+
+    private LocalTime tideTime2;
+
+    private LocalTime tideTime3;
+
+    private LocalTime tideTime4;
+
+
 }

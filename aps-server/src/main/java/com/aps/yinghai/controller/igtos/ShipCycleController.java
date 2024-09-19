@@ -2,8 +2,8 @@ package com.aps.yinghai.controller.igtos;
 
 
 import com.aps.yinghai.base.Result;
-import com.aps.yinghai.iGTOS.ShipCycle;
-import com.aps.yinghai.service.igtos.IShipCycleService;
+import com.aps.yinghai.iGTOS.BizShipCycle;
+import com.aps.yinghai.service.igtos.IBizShipCycleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,19 +21,19 @@ import java.util.List;
 public class ShipCycleController {
 
 
-    private final IShipCycleService iShipCycleService;
+    private final IBizShipCycleService iBizShipCycleService;
 
-    public ShipCycleController(IShipCycleService iShipCycleService) {
-        this.iShipCycleService = iShipCycleService;
+    public ShipCycleController(IBizShipCycleService iBizShipCycleService) {
+        this.iBizShipCycleService = iBizShipCycleService;
     }
 
     @Operation(summary = "获取数据列表")
     @PostMapping("list")
     @ApiResponse(responseCode = "200", description = "成功",
             content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ShipCycle.class))})
+                    schema = @Schema(implementation = BizShipCycle.class))})
     public Result<List> list() {
-        List<ShipCycle> list = iShipCycleService.list();
+        List<BizShipCycle> list = iBizShipCycleService.list();
         return Result.ok(list, List.class);
     }
 

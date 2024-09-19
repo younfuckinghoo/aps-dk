@@ -21,7 +21,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName("cabin_info")
+@TableName("ALG_CABIN_INFO")
 @Schema(name = "舱口信息")
 public class CabinInfo implements Serializable {
 
@@ -34,7 +34,7 @@ public class CabinInfo implements Serializable {
      * 船舶ID
      */
     @TableField("SHIP_ID")
-    private Integer shipId;
+    private String shipId;
 
     /**
      * 舱号

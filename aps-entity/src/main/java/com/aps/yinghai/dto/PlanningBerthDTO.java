@@ -157,12 +157,12 @@ public class PlanningBerthDTO {
      */
     private void rewriteBollardOccupyTime(List<PlanningBollardDTO> candidateBollardList) {
         // 将被占用的缆柱更新到原始数据上
-        Map<Integer, PlanningBollardDTO> bollardDTOMap = this.bollardDTOList.stream().collect(Collectors.toMap(t -> t.getBollardInfo().getId(), t -> t));
-        Map<Integer, PlanningBollardDTO> preBollardDTOMap = hasPreBerth()?this.preBerth.getBollardDTOList().stream().collect(Collectors.toMap(t -> t.getBollardInfo().getId(), t -> t)): Collections.EMPTY_MAP;
-        Map<Integer, PlanningBollardDTO> nexBollardDTOMap = hasNextBerth()?this.nextBerth.getBollardDTOList().stream().collect(Collectors.toMap(t -> t.getBollardInfo().getId(), t -> t)): Collections.EMPTY_MAP;
+        Map<String, PlanningBollardDTO> bollardDTOMap = this.bollardDTOList.stream().collect(Collectors.toMap(t -> t.getBollardInfo().getId(), t -> t));
+        Map<String, PlanningBollardDTO> preBollardDTOMap = hasPreBerth()?this.preBerth.getBollardDTOList().stream().collect(Collectors.toMap(t -> t.getBollardInfo().getId(), t -> t)): Collections.EMPTY_MAP;
+        Map<String, PlanningBollardDTO> nexBollardDTOMap = hasNextBerth()?this.nextBerth.getBollardDTOList().stream().collect(Collectors.toMap(t -> t.getBollardInfo().getId(), t -> t)): Collections.EMPTY_MAP;
 
         candidateBollardList.forEach(changed->{
-            Integer id = changed.getBollardInfo().getId();
+            String id = changed.getBollardInfo().getId();
             PlanningBollardDTO original = bollardDTOMap.get(id);
             if (original==null){
                 original = preBollardDTOMap.get(id);
@@ -302,7 +302,7 @@ public class PlanningBerthDTO {
      * 是第一个缆
      * @return
      */
-    public boolean isFirstBollard(Integer bollardId){
+    public boolean isFirstBollard(String bollardId){
         return this.bollardDTOList.get(0).getBollardInfo().getId().equals(bollardId);
     }
 
@@ -310,8 +310,8 @@ public class PlanningBerthDTO {
      * 是最后一个缆
      * @return
      */
-    public boolean isLastBollard(Integer bollardId){
-        return this.bollardDTOList.get(this.bollardDTOList.size()-1).equals(bollardId);
+    public boolean isLastBollard(String bollardId){
+        return this.bollardDTOList.get(this.bollardDTOList.size()-1).getBollardInfo().getId().equals(bollardId);
     }
 
 

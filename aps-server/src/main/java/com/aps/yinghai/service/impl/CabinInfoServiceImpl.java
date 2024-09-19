@@ -22,7 +22,7 @@ import java.util.List;
 public class CabinInfoServiceImpl extends ServiceImpl<CabinInfoMapper, CabinInfo> implements ICabinInfoService {
 
     @Override
-    public List<CabinInfo> listCabinByShipIdList(List<Integer> shipIdList) {
+    public List<CabinInfo> listCabinByShipIdList(List<String> shipIdList) {
         LambdaQueryWrapper<CabinInfo> queryWrapper = Wrappers.lambdaQuery(CabinInfo.class).in(CabinInfo::getShipId, shipIdList);
         return this.list(queryWrapper);
     }

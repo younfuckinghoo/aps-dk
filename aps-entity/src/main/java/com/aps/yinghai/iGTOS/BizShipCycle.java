@@ -2,11 +2,17 @@ package com.aps.yinghai.iGTOS;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
+@Data
 @TableName("BIZ_SHIPCYCLE")
-public class ShipCycle {
+public class BizShipCycle extends BizBaseEntity {
+
+
+
 
     /**
      * 中文名
@@ -27,12 +33,12 @@ public class ShipCycle {
      *
      */
     @TableField("IN_OUT_TRADE")
-    private String inOutTrade;
+    private Integer inOutTrade;
     /**
      *
      */
     @TableField("DEADWEIGHT_TON")
-    private String deadweightTon;
+    private BigDecimal deadweightTon;
     /**
      *
      */
@@ -49,19 +55,59 @@ public class ShipCycle {
     @TableField("ARRIVE_START_WATER")
     private BigDecimal arriveStartWater;
     /**
+     * 抵港中吃水
+     */
+    @TableField("MIDDLE_WATER")
+    private BigDecimal middleWater;
+    /**
      *
      */
     @TableField("ARRIVE_END_WATER")
     private BigDecimal arriveEndWater;
+
     /**
      *
      */
     @TableField("LEAVE_START_WATER")
     private BigDecimal leaveStartWater;
     /**
+     * 离港中吃水
+     */
+    @TableField("MIDDLE_WATER_OUT")
+    private BigDecimal middleWaterOut;
+    /**
      * LEAVE_END_WATER
      */
     @TableField("LEAVE_END_WATER")
     private BigDecimal leaveEndWater;
 
+    /**
+     * 出口船代
+     */
+    @TableField("SHIPAGENT_OUT_NAME")
+    private String shipagentOutName;
+
+    /**
+     * 进口船代
+     */
+    @TableField("SHIPAGENT_IN_NAME")
+    private String shipagentInName;
+
+    /**
+     * 货代
+     */
+    @TableField("FORWARDER")
+    private String forwarder;
+
+    /**
+     * 船舶是否报关（前置手续）
+     */
+    @TableField("HGFXZT_ISRELEASE")
+    private Integer hgfxztIsrelease;
+
+    /**
+     * 抵港时间（预抵时间，经常更新）
+     */
+    @TableField("DATE_ARRIVE")
+    private LocalDateTime dateArrive;
 }

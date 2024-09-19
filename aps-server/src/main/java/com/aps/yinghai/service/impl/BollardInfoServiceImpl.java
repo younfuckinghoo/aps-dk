@@ -22,7 +22,7 @@ import java.util.List;
 public class BollardInfoServiceImpl extends ServiceImpl<BollardInfoMapper, BollardInfo> implements IBollardInfoService {
 
     @Override
-    public List<BollardInfo> listBollardByBerthIdList(List<Integer> berthIdList) {
+    public List<BollardInfo> listBollardByBerthIdList(List<String> berthIdList) {
         LambdaQueryWrapper<BollardInfo> queryWrapper = Wrappers.lambdaQuery(BollardInfo.class).in(BollardInfo::getBerthId, berthIdList).orderByAsc(BollardInfo::getBollardNo);
         return this.list(queryWrapper);
     }
