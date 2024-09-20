@@ -64,4 +64,20 @@ public class ShipWorkingSequence extends BaseEntity implements Serializable {
     private BigDecimal singleShipWorkHourQty;
 
 
+    /**
+     * 岸机数量
+     */
+    @TableField("MACHINE_COUNT")
+    private Integer machineCount;
+    /**
+     * 岸机类型
+     */
+    @TableField("MACHINE_TYPE_CODE")
+    private String machineTypeCode;
+
+    /**
+     * 作业时长(小时)
+     */
+    @TableField("WORK_HOURS")
+    private BigDecimal workHours;
 }

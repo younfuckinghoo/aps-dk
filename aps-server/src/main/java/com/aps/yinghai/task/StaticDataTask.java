@@ -167,7 +167,7 @@ public class StaticDataTask {
                 Tide tide = new Tide();
                 tide.setId(biz.getId());
 
-                tide.setDate(DateTimeUtil.parseDate(biz.getDate(),this.tide_date_format));
+                tide.setTideDate(DateTimeUtil.parseDate(biz.getTideDate(),this.tide_date_format));
                 tide.setTideHeight1(new BigDecimal(biz.getTideHeight1()));
                 tide.setTideHeight2(new BigDecimal(biz.getTideHeight2()));
                 tide.setTideHeight3(new BigDecimal(biz.getTideHeight3()));

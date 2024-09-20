@@ -2,8 +2,10 @@ package com.aps.yinghai.mapper;
 
 import com.aps.yinghai.entity.BerthInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -16,4 +18,6 @@ import java.time.LocalDateTime;
 public interface BerthInfoMapper extends BaseMapper<BerthInfo> {
 
     LocalDateTime getMaxCreateTime();
+
+    List<BerthInfo> listOriginalBerth(@Param("available") Integer available);
 }

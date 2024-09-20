@@ -17,4 +17,16 @@ public interface IGTOSConstant {
     }
 
 
+    interface TradeType{
+        /**
+         * 内贸
+         */
+        int IN = 1;
+        /**
+         * 外贸
+         */
+        int OUT = 2;
+    }
+
+
 }

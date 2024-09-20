@@ -1,5 +1,6 @@
 package com.aps.yinghai.task;
 
+import com.aps.yinghai.constant.IGTOSConstant;
 import com.aps.yinghai.entity.ShipForecast;
 import com.aps.yinghai.entity.ShipWorkingInfoDetail;
 import com.aps.yinghai.entity.ShipWorkingSequence;
@@ -93,7 +94,7 @@ public class ShipForecastTask {
             shipForecast.setLoadUnload(plan.getLoadUnload());
             shipForecast.setWaitConstantDrainageTime(plan.getWaitConstantDrainageTime());
             shipForecast.setShipStatus(plan.getShipStatus());
-            shipForecast.setCapacityPerHour(plan.getCapacityPerHour());
+
             shipForecast.setIsSpecialWork(plan.getIsSpecialWork());
             shipForecast.setWaterRatio(plan.getWaterRatio());
 
@@ -105,7 +106,12 @@ public class ShipForecastTask {
                     shipForecast.setIgtosShipcycleId(bizShipCycle.getId());
                     shipForecast.setShipName(bizShipCycle.getShipNameCh());
                     shipForecast.setInOutTrade(bizShipCycle.getInOutTrade());
-                    shipForecast.setDeadweightTon(bizShipCycle.getDeadweightTon());
+                    if (IGTOSConstant.TradeType.IN == bizShipCycle.getInOutTrade()) {
+                        shipForecast.setInOutLoadQty(bizShipCycle.getLoadqtyIn());
+                    }else{
+                        shipForecast.setInOutLoadQty(bizShipCycle.getLoadqtyOut());
+                    }
+
                     shipForecast.setShipLength(bizShipCycle.getShipLength());
                     shipForecast.setShipWidth(bizShipCycle.getShipWidth());
                     shipForecast.setArriveStartWater(bizShipCycle.getArriveStartWater());

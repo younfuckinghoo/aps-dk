@@ -1,10 +1,8 @@
 package com.aps.yinghai.entity;
 
 import com.aps.yinghai.base.BaseEntity;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -67,11 +65,11 @@ public class ShipForecast extends BaseEntity implements Serializable {
     @Schema(name = "装载量")
     private BigDecimal loadQty;
     /**
-     * 载重吨 来自船舶资料 优先考虑
+     * 进出口载货量 来自船舶资料 优先考虑
      */
-    @TableField("DEADWEIGHT_TON")
-    @Schema(name = "载重吨")
-    private BigDecimal deadweightTon;
+    @TableField("IN_OUT_LOAD_QTY")
+    @Schema(name = "进出口载货量")
+    private BigDecimal inOutLoadQty;
 
     /**
      * 舱口数
@@ -337,5 +335,48 @@ public class ShipForecast extends BaseEntity implements Serializable {
      */
     @TableField("WATER_RATIO")
     private BigDecimal waterRatio;
+
+
+
+
+    /**
+     *泊位
+     */
+    @TableField(value = "BERTH_NO",updateStrategy= FieldStrategy.NOT_NULL)
+    private String berthNo;
+
+    /**
+     *靠泊时间
+     */
+    @TableField(value = "EXPECT_BERTH_TIME",updateStrategy= FieldStrategy.NOT_NULL)
+    private LocalDateTime expectBerthTime;
+
+    /**
+     *开工时间
+     */
+    @TableField(value = "START_TIME",updateStrategy= FieldStrategy.NOT_NULL)
+    private LocalDateTime startTime;
+
+    /**
+     *完工时间
+     */
+    @TableField(value = "END_TIME",updateStrategy= FieldStrategy.NOT_NULL)
+    private LocalDateTime endTime;
+    /**
+     *离港时间
+     */
+    @TableField(value = "EXPECT_LEAVE_TIME",updateStrategy= FieldStrategy.NOT_NULL)
+    private LocalDateTime expectLeaveTime;
+
+    /**
+     *前缆
+     */
+    @TableField(value = "BOLLARD_FORWARD",updateStrategy= FieldStrategy.NOT_NULL)
+    private String bollardForward;
+    /**
+     *后缆
+     */
+    @TableField(value = "BOLLARD_BEHIND",updateStrategy= FieldStrategy.NOT_NULL)
+    private String bollardBehind;
 
 }

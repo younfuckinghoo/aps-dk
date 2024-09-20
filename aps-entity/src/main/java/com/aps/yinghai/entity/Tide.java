@@ -33,7 +33,7 @@ public class Tide implements Serializable {
     private String id;
 
     @TableField("TIDE_DATE")
-    private String tideDate;
+    private LocalDate tideDate;
 
     private BigDecimal h0;
 

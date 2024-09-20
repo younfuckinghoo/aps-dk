@@ -1,5 +1,6 @@
 package com.aps.yinghai.iGTOS;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -19,106 +20,148 @@ public class BizShipPrePlan extends BizBaseEntity {
     /**
      * 算法状态
      */
-    @TableField("ALGORITHM_STATE")
+    @TableField(value = "ALGORITHM_STATE",updateStrategy= FieldStrategy.NOT_NULL)
     private Integer algorithmState;
 
     /**
      * 抵港吃水
      */
-    @TableField("ARRIVE_DRAUGHT")
+    @TableField(value = "ARRIVE_DRAUGHT",updateStrategy= FieldStrategy.NOT_NULL)
     private BigDecimal arriveDraught;
 
     /**
      * 离港吃水
      */
-    @TableField("LEAVE_DRAUGHT")
+    @TableField(value = "LEAVE_DRAUGHT",updateStrategy= FieldStrategy.NOT_NULL)
     private BigDecimal leaveDraught;
 
     /**
      * 预抵时间
      */
-    @TableField("EXPECT_ARRIVE_TIME")
+    @TableField(value = "EXPECT_ARRIVE_TIME",updateStrategy= FieldStrategy.NOT_NULL)
     private LocalDateTime expectArriveTime;
 
 
     /**
      * 装载量
      */
-    @TableField("LOAD_QTY")
+    @TableField(value = "LOAD_QTY",updateStrategy= FieldStrategy.NOT_NULL)
     @Schema(name = "装载量")
     private BigDecimal loadQty;
 
     /**
      * 等待常数排水时长（数字）
      */
-    @TableField("WAIT_CONSTANT_DRAINAGE_TIME")
+    @TableField(value = "WAIT_CONSTANT_DRAINAGE_TIME",updateStrategy= FieldStrategy.NOT_NULL)
     private BigDecimal waitConstantDrainageTime;
 
     /**
      * 离泊水尺（装船、数字）
      */
-    @TableField("UNBERTHING_DRAFT")
+    @TableField(value = "UNBERTHING_DRAFT",updateStrategy= FieldStrategy.NOT_NULL)
     private BigDecimal unberthingDraft;
 
 
     /**
      * 平均舱时量
      */
-    @TableField("AVG_SHIP_WORK_HOUR_QTY")
+    @TableField(value = "AVG_SHIP_WORK_HOUR_QTY",updateStrategy= FieldStrategy.NOT_NULL)
     private BigDecimal capacityPerHour;
 
     /**
      * 是否特殊作业默认为否
      */
-    @TableField("IS_SPECIAL_WORK")
+    @TableField(value = "IS_SPECIAL_WORK",updateStrategy= FieldStrategy.NOT_NULL)
     private Integer isSpecialWork;
 
     /**
      * 含水量
      */
-    @TableField("WATER_RATIO")
+    @TableField(value = "WATER_RATIO",updateStrategy= FieldStrategy.NOT_NULL)
     private BigDecimal waterRatio;
 
     /**
      * 装卸类型
      */
-    @TableField("LOAD_UNLOAD")
+    @TableField(value = "LOAD_UNLOAD",updateStrategy= FieldStrategy.NOT_NULL)
     @Schema(name = "装卸类型")
     private Integer loadUnload;
 
     /**
      * 岸机类型
      */
-    @TableField("MACHINE_TYPE_CODE")
+    @TableField(value = "MACHINE_TYPE_CODE",updateStrategy= FieldStrategy.NOT_NULL)
     private String machineTypeCode;
 
     /**
      * 岸机数量
      */
-    @TableField("MACHINE_COUNT")
+    @TableField(value = "MACHINE_COUNT",updateStrategy= FieldStrategy.NOT_NULL)
     private Integer machineCount;
 
     /**
      * 中间水尺次数,云港通需要推送
      */
-    @TableField("MIDDLE_WATER_NUM")
+    @TableField(value = "MIDDLE_WATER_NUM",updateStrategy= FieldStrategy.NOT_NULL)
     private Integer middleWaterNum;
 
 
     /**
      * 船舶状态（7预排）
      */
-    @TableField("SHIP_STATUS")
+    @TableField(value = "SHIP_STATUS",updateStrategy= FieldStrategy.NOT_NULL)
     private Integer shipStatus;
 
     /**
      *船号 能够判断是否引入船期
      */
-    @TableField("SHIP_NO")
+    @TableField(value = "SHIP_NO",updateStrategy= FieldStrategy.NOT_NULL)
     private String shipNo;
     /**
      *船名
      */
-    @TableField("SHIP_NAME")
+    @TableField(value = "SHIP_NAME",updateStrategy= FieldStrategy.NOT_NULL)
     private String shipName;
+
+    /**
+     *泊位
+     */
+    @TableField(value = "BERTH_NO",updateStrategy= FieldStrategy.NOT_NULL)
+    private String berthNo;
+
+    /**
+     *靠泊时间
+     */
+    @TableField(value = "EXPECT_BERTH_TIME",updateStrategy= FieldStrategy.NOT_NULL)
+    private LocalDateTime expectBerthTime;
+
+    /**
+     *开工时间
+     */
+    @TableField(value = "START_TIME",updateStrategy= FieldStrategy.NOT_NULL)
+    private LocalDateTime startTime;
+
+    /**
+     *完工时间
+     */
+    @TableField(value = "END_TIME",updateStrategy= FieldStrategy.NOT_NULL)
+    private LocalDateTime endTime;
+    /**
+     *离港时间
+     */
+    @TableField(value = "EXPECT_LEAVE_TIME",updateStrategy= FieldStrategy.NOT_NULL)
+    private LocalDateTime expectLeaveTime;
+
+    /**
+     *前缆
+     */
+    @TableField(value = "BOLLARD_FORWARD",updateStrategy= FieldStrategy.NOT_NULL)
+    private String bollardForward;
+    /**
+     *后缆
+     */
+    @TableField(value = "BOLLARD_BEHIND",updateStrategy= FieldStrategy.NOT_NULL)
+    private String bollardBehind;
+
+
 }

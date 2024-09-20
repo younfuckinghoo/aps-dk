@@ -38,10 +38,20 @@ public class BizShipCycle extends BizBaseEntity {
     @TableField("IN_OUT_TRADE")
     private Integer inOutTrade;
     /**
-     *
+     * 船标准载重吨
      */
     @TableField("DEADWEIGHT_TON")
     private BigDecimal deadweightTon;
+    /**
+     *进口载货量
+     */
+    @TableField("LOADQTY_IN")
+    private BigDecimal loadqtyIn;
+    /**
+     *出口载货量
+     */
+    @TableField("LOADQTY_OUT")
+    private BigDecimal loadqtyOut;
     /**
      *
      */
