@@ -4,6 +4,7 @@ import com.aps.yinghai.base.BaseEnum;
 import com.aps.yinghai.exception.NotFindEnumException;
 
 public enum ShipStatusEnum implements BaseEnum {
+//    1:待定;2:预报;3:确报;4:靠泊;5:离泊;6:离港;7:预排;
     PRE_PLAN(7,"预排");
 
 

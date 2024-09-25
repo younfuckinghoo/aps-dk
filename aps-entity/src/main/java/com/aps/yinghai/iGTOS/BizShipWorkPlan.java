@@ -111,6 +111,12 @@ public class BizShipWorkPlan extends BizBaseEntity {
     @TableField("PLAN_DATE")
     private LocalDateTime planDate;
 
+    /**
+     * 首靠泊位号
+     */
+    @TableField("BERTH_NO")
+    private String berthNo;
+
 
 
 

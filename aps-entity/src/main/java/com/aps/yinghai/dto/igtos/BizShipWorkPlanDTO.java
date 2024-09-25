@@ -24,6 +24,7 @@ public class BizShipWorkPlanDTO {
         bizShipWorkPlan.setCreator("shuiguiyuan");
         bizShipWorkPlan.setCreatorId("shuiguiyuan");
         bizShipWorkPlan.setCreateDate(LocalDateTime.now());
+        bizShipWorkPlan.setBerthNo(planningShipDTO.getShipForecast().getBerthNo());
         bizShipWorkPlan.setCabinQty(planningShipDTO.getShipForecast().getShipcabinQty());
         bizShipWorkPlan.setPlanDate(planDate);
         bizShipWorkPlan.setShipcycleId(planningShipDTO.getShipForecast().getIgtosShipcycleId());

@@ -127,7 +127,7 @@ public class ShipForecast extends BaseEntity implements Serializable {
     private Integer loadUnload;
 
     /**
-     * 船舶状态（1未就绪；2已就绪；3已作业；4作业完成）
+     * 船舶状态（1:待定;2:预报;3:确报;4:靠泊;5:离泊;6:离港;7:预排;）
      */
     @TableField("SHIP_STATUS")
     @Schema(name = "船舶状态")
