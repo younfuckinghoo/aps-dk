@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -37,6 +38,14 @@ public class ShipForecastServiceImpl extends ServiceImpl<ShipForecastMapper, Shi
                     .eq(ShipForecast::getCargoProcedure,PlanConstant.YES);
         }
         lambdaQueryWrapper.orderByAsc(ShipForecast::getExpectArriveTime);
+        return this.list(lambdaQueryWrapper);
+    }
+
+    @Override
+    public List<ShipForecast> listShipForecastByTimeRange(LocalDateTime startTime, LocalDateTime endTime) {
+
+        LambdaQueryWrapper<ShipForecast> lambdaQueryWrapper = Wrappers.lambdaQuery(ShipForecast.class);
+        lambdaQueryWrapper.gt(ShipForecast::getStartTime,startTime).lt(ShipForecast::getStartTime,endTime);
         return this.list(lambdaQueryWrapper);
     }
 }

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @TableName("BIZ_SHIPCYCLE_EXPAND")
-public class BizShipCycleExtend extends BizBaseEntity {
+public class BizShipCycleExtend  {
 
     /**
      * SHIPCYCLE_ID

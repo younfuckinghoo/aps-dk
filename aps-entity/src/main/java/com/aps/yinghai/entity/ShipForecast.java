@@ -296,11 +296,11 @@ public class ShipForecast extends BaseEntity implements Serializable {
     @TableField("WAIT_CONSTANT_DRAINAGE_TIME")
     private BigDecimal waitConstantDrainageTime;
 
-    /**
-     * 离泊水尺（装船、数字）
-     */
-    @TableField("UNBERTHING_DRAFT")
-    private BigDecimal unberthingDraft;
+//    /**
+//     * 离泊水尺（装船、数字）
+//     */
+//    @TableField("UNBERTHING_DRAFT")
+//    private BigDecimal unberthingDraft;
 
 
 
@@ -330,11 +330,11 @@ public class ShipForecast extends BaseEntity implements Serializable {
     @TableField("MACHINE_COUNT")
     private Integer machineCount;
 
-    /**
-     * 含水量
-     */
-    @TableField("WATER_RATIO")
-    private BigDecimal waterRatio;
+//    /**
+//     * 含水量
+//     */
+//    @TableField("WATER_RATIO")
+//    private BigDecimal waterRatio;
 
 
 

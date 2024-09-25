@@ -40,7 +40,7 @@ public class ShipWorkingInfoDetail extends BaseEntity implements Serializable {
     private Integer ticketNum;
 
     /**
-     * 估水时间
+     * 估水时间 MM-dd HH:mm
      */
     @TableField("WATER_ESTIMATION_TIME")
     private String waterEstimationTime;

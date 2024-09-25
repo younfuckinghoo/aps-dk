@@ -3,6 +3,7 @@ package com.aps.yinghai.mapper;
 import com.aps.yinghai.entity.Tide;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -15,6 +16,6 @@ import java.time.LocalDateTime;
  */
 public interface TideMapper extends BaseMapper<Tide> {
 
-    LocalDateTime getMaxDate();
+    LocalDate getMaxDate();
 
 }

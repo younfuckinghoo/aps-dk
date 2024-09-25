@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @Data
 @TableName("BIZ_SHIP_PRE_PLAN_CABIN_RELATION")
-public class BizShipWorkSequence extends BizBaseEntity {
+public class BizShipWorkSequence {
 
     @TableId("ID")
     private String id;

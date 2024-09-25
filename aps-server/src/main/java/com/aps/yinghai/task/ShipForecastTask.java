@@ -5,6 +5,7 @@ import com.aps.yinghai.entity.ShipForecast;
 import com.aps.yinghai.entity.ShipWorkingInfoDetail;
 import com.aps.yinghai.entity.ShipWorkingSequence;
 import com.aps.yinghai.enums.ShipAlgStateEnum;
+import com.aps.yinghai.enums.TradeTypeEnum;
 import com.aps.yinghai.iGTOS.*;
 import com.aps.yinghai.mapper.ShipForecastMapper;
 import com.aps.yinghai.mapper.ShipWorkingInfoDetailMapper;
@@ -16,8 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +55,10 @@ public class ShipForecastTask {
         this.iBizShipWorkSequenceService = iBizShipWorkSequenceService;
     }
 
-    @Scheduled(cron = "0 0/5 * * * ?")
-    public void pullShipPrePlan(){
+    @Transactional
+    @Scheduled(cron = "1/50 * * * * ?")
+//    @Scheduled(cron = "0 0/5 * * * ?")
+    public void pullShipPrePlan() {
         List<BizShipPrePlan> bizShipPrePlans;
         List<BizShipCycle> bizShipCycles;
         List<BizShipCycleExtend> bizShipCycleExtends;
@@ -62,14 +67,14 @@ public class ShipForecastTask {
         logger.info("---------------------pullShipPrePlan--------------------");
         // 1.首先查询当前算法数据中最大的创建日期
         LocalDateTime localDateTime = shipForecastMapper.checkMaxCreateTime();
-        if (localDateTime == null)localDateTime = LocalDateTime.of(2001,1,1,0,0,0);
+        if (localDateTime == null) localDateTime = LocalDateTime.of(2001, 1, 1, 0, 0, 0);
         // 2.查询iGTOS的预计划表中大于这个创建日期的数据
         bizShipPrePlans = iBizShipPrePlanService.listShipPrePlanAfterTime(localDateTime);
         // 3.查到数据后查询其对应的扩展表、船期、船期扩展表
-        if (!CollectionUtils.isEmpty(bizShipPrePlans)){
+        if (!CollectionUtils.isEmpty(bizShipPrePlans)) {
             List<String> shipNoList = bizShipPrePlans.stream().filter(t -> StringUtils.isNoneBlank(t.getShipNo())).map(t -> t.getShipNo()).collect(Collectors.toList());
             bizShipCycles = iBizShipCycleService.listByShipNoList(shipNoList);
-            if (!CollectionUtils.isEmpty(bizShipCycles)){
+            if (!CollectionUtils.isEmpty(bizShipCycles)) {
                 shipCycleMap = bizShipCycles.stream().collect(Collectors.toMap(t -> t.getShipNo(), t -> t));
                 List<String> shipCycleIdList = bizShipCycles.stream().map(t -> t.getId()).collect(Collectors.toList());
                 bizShipCycleExtends = iBizShipCycleExtendService.listByShipCycleIdList(shipCycleIdList);
@@ -96,19 +101,19 @@ public class ShipForecastTask {
             shipForecast.setShipStatus(plan.getShipStatus());
 
             shipForecast.setIsSpecialWork(plan.getIsSpecialWork());
-            shipForecast.setWaterRatio(plan.getWaterRatio());
+//            shipForecast.setWaterRatio(plan.getWaterRatio());
 
 
             if (StringUtils.isNotBlank(plan.getShipNo())) {
                 shipForecast.setShipNo(plan.getShipNo());
                 BizShipCycle bizShipCycle = shipCycleMap.get(plan.getShipNo());
-                if (bizShipCycle!=null){
+                if (bizShipCycle != null) {
                     shipForecast.setIgtosShipcycleId(bizShipCycle.getId());
                     shipForecast.setShipName(bizShipCycle.getShipNameCh());
                     shipForecast.setInOutTrade(bizShipCycle.getInOutTrade());
-                    if (IGTOSConstant.TradeType.IN == bizShipCycle.getInOutTrade()) {
+                    if (TradeTypeEnum.IN.getCode() == bizShipCycle.getInOutTrade()) {
                         shipForecast.setInOutLoadQty(bizShipCycle.getLoadqtyIn());
-                    }else{
+                    } else {
                         shipForecast.setInOutLoadQty(bizShipCycle.getLoadqtyOut());
                     }
 
@@ -126,31 +131,32 @@ public class ShipForecastTask {
                     shipForecast.setHgfxztIsrelease(bizShipCycle.getHgfxztIsrelease());
                     shipForecast.setDateArrive(bizShipCycle.getDateArrive());
 
-                    if (bizShipCycle.getReviseDate()!=null && bizShipCycle.getReviseDate().isAfter(shipForecast.getReviseDate())){
+                    if (bizShipCycle.getReviseDate() != null && bizShipCycle.getReviseDate().isAfter(shipForecast.getReviseDate())) {
                         shipForecast.setReviseDate(bizShipCycle.getReviseDate());
                     }
 
                     BizShipCycleExtend bizShipCycleExtend = shipCycleExtendMap.get(bizShipCycle.getId());
-                    if (bizShipCycleExtend!=null){
+                    if (bizShipCycleExtend != null) {
                         shipForecast.setIsGuarantee(bizShipCycleExtend.getIsGuarantee());
                         shipForecast.setIsHsysb(bizShipCycleExtend.getIsHsysb());
-                        shipForecast.setLoadUnload(bizShipCycleExtend.getLoadUnload());
+                        if (bizShipCycleExtend.getLoadUnload() != null)
+                            shipForecast.setLoadUnload(bizShipCycleExtend.getLoadUnload());
                         shipForecast.setOriginPlace(bizShipCycleExtend.getOriginPlace());
                         shipForecast.setIsInbond(bizShipCycleExtend.getIsInbond());
                         shipForecast.setIsUnloadShipEntrust(bizShipCycleExtend.getIsUnloadShipEntrust());
                         shipForecast.setIsCargoDeclaration(bizShipCycleExtend.getIsCargoDeclaration());
                         shipForecast.setIsLoadShipNotice(bizShipCycleExtend.getIsLoadShipNotice());
                         shipForecast.setIsUrlFhzl(bizShipCycleExtend.getIsUrlFhzl());
-                        if (bizShipCycleExtend.getReviseDate()!=null && bizShipCycleExtend.getReviseDate().isAfter(shipForecast.getReviseDate())){
-                            shipForecast.setReviseDate(bizShipCycleExtend.getReviseDate());
-                        }
+//                        if (bizShipCycleExtend.getReviseDate() != null && bizShipCycleExtend.getReviseDate().isAfter(shipForecast.getReviseDate())) {
+//                            shipForecast.setReviseDate(bizShipCycleExtend.getReviseDate());
+//                        }
                     }
 
                 }
             }
             shipForecastList.add(shipForecast);
         }
-        if (!CollectionUtils.isEmpty(shipForecastList)){
+        if (!CollectionUtils.isEmpty(shipForecastList)) {
             List<String> prePlanIdList = shipForecastList.stream().map(t -> t.getId()).collect(Collectors.toList());
             List<BizShipPlanWorkDetail> bizShipPlanWorkDetails = iBizShipWorkDetailService.listByPrePlanIdList(prePlanIdList);
             List<BizShipWorkSequence> bizShipWorkSequences = iBizShipWorkSequenceService.listByPrePlanIdList(prePlanIdList);
@@ -161,8 +167,8 @@ public class ShipForecastTask {
                 shipWorkingInfoDetail.setWaterRatio(t.getWaterRatio());
                 shipWorkingInfoDetail.setTicketNum(t.getTicketNum());
                 shipWorkingInfoDetail.setWaterEstimationTime(t.getWaterEstimationTime());
-                shipWorkingInfoDetail.setCreateDate(t.getCreateDate());
-                shipWorkingInfoDetail.setReviseDate(t.getReviseDate());
+//                shipWorkingInfoDetail.setCreateDate(t.getCreateDate());
+//                shipWorkingInfoDetail.setReviseDate(t.getReviseDate());
                 return shipWorkingInfoDetail;
             }).collect(Collectors.toList());
             List<ShipWorkingSequence> workingSequenceList = bizShipWorkSequences.stream().map(t -> {
@@ -170,10 +176,10 @@ public class ShipForecastTask {
                 shipWorkingSequence.setId(t.getId());
                 shipWorkingSequence.setShipCabinNo(t.getShipCabinNo());
                 shipWorkingSequence.setShipForecastId(t.getShipPrePlanId());
-                shipWorkingSequence.setSingleShipWorkHourQty(t.getSingleShipWorkHourQty());
-                shipWorkingSequence.setTotalWeight(t.getTotalWeight());
-                shipWorkingSequence.setCreateDate(t.getCreateDate());
-                shipWorkingSequence.setReviseDate(t.getReviseDate());
+                shipWorkingSequence.setSingleShipWorkHourQty(t.getSingleShipWorkHourQty().setScale(2, RoundingMode.CEILING));
+                shipWorkingSequence.setTotalWeight(t.getTotalWeight().setScale(2, RoundingMode.CEILING));
+//                shipWorkingSequence.setCreateDate(t.getCreateDate());
+//                shipWorkingSequence.setReviseDate(t.getReviseDate());
                 return shipWorkingSequence;
             }).collect(Collectors.toList());
             shipWorkingInfoDetailMapper.insert(workingInfoDetailList);
@@ -185,13 +191,6 @@ public class ShipForecastTask {
 
 
     }
-
-
-
-
-
-
-
 
 
 }

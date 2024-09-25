@@ -3,10 +3,10 @@
 <mapper namespace="com.aps.yinghai.mapper.BerthInfoMapper">
 
     <select id="getMaxCreateTime" resultType="java.time.LocalDateTime">
-        select max(CREATE_TIME) from ALG_BERTH_INFO
+        select max(CREATE_DATE) from ALG_BERTH_INFO
     </select>
 <!--    <![CDATA[<= ]]>-->
     <select id="listOriginalBerth" resultType="com.aps.yinghai.entity.BerthInfo">
-        select * from  ALG_BERTH_INFO where AVAILABLE = #{available} and LENGTH(BERTH_NO) &lt; 3
+        select * from  ALG_BERTH_INFO where AVAILABLE = #{available} and LENGTH(BERTH_NO) &lt; 3 and BERTH_NO LIKE 'D%' order by BERTH_NO asc
     </select>
 </mapper>

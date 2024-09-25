@@ -69,11 +69,16 @@ spring:
 #        deny:
     algorithm:
       type: com.alibaba.druid.pool.DruidDataSource
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://192.168.8.241:3306/aps?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false #characterEncoding=utf8&serverTimezone=Asia/Shanghai
-      username: aps_admin
+      driver-class-name: oracle.jdbc.driver.OracleDriver
+      url: jdbc:oracle:thin:@//10.236.2.72:1521/ORCL
+      username: igtos_dktest
       # todo:jiami
-      password: aps2024
+      password: QGDK_ignew9
+#      driver-class-name: com.mysql.cj.jdbc.Driver
+#      url: jdbc:mysql://192.168.8.241:3306/aps?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false #characterEncoding=utf8&serverTimezone=Asia/Shanghai
+#      username: aps_admin
+#      # todo:jiami
+#      password: aps2024
       # 参考整合博文 https://blog.csdn.net/m0_37739193/article/details/114855227
       # druid 连接池管理
       druid:
@@ -135,7 +140,7 @@ spring:
       type: com.alibaba.druid.pool.DruidDataSource
       driver-class-name: oracle.jdbc.driver.OracleDriver
       url: jdbc:oracle:thin:@//10.236.2.72:1521/ORCL
-      username: IGTOS_NEW
+      username: igtos_dktest
       # todo:jiami
       password: QGDK_ignew9
       # 参考整合博文 https://blog.csdn.net/m0_37739193/article/details/114855227

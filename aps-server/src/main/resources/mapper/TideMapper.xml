@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.aps.yinghai.mapper.TideMapper">
 
-    <select id="getMaxDate" resultType="java.time.LocalDateTime">
-        select max(`DATE`) from ALG_TIDE
+    <select id="getMaxDate" resultType="java.time.LocalDate">
+        select max(TIDE_DATE) from ALG_TIDE
     </select>
 </mapper>

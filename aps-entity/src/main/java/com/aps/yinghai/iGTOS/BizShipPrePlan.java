@@ -55,11 +55,7 @@ public class BizShipPrePlan extends BizBaseEntity {
     @TableField(value = "WAIT_CONSTANT_DRAINAGE_TIME",updateStrategy= FieldStrategy.NOT_NULL)
     private BigDecimal waitConstantDrainageTime;
 
-    /**
-     * 离泊水尺（装船、数字）
-     */
-    @TableField(value = "UNBERTHING_DRAFT",updateStrategy= FieldStrategy.NOT_NULL)
-    private BigDecimal unberthingDraft;
+
 
 
     /**
@@ -74,11 +70,11 @@ public class BizShipPrePlan extends BizBaseEntity {
     @TableField(value = "IS_SPECIAL_WORK",updateStrategy= FieldStrategy.NOT_NULL)
     private Integer isSpecialWork;
 
-    /**
-     * 含水量
-     */
-    @TableField(value = "WATER_RATIO",updateStrategy= FieldStrategy.NOT_NULL)
-    private BigDecimal waterRatio;
+//    /**
+//     * 含水量
+//     */
+//    @TableField(value = "WATER_RATIO",updateStrategy= FieldStrategy.NOT_NULL)
+//    private BigDecimal waterRatio;
 
     /**
      * 装卸类型
@@ -111,6 +107,11 @@ public class BizShipPrePlan extends BizBaseEntity {
      */
     @TableField(value = "SHIP_STATUS",updateStrategy= FieldStrategy.NOT_NULL)
     private Integer shipStatus;
+//    /**
+//     * 船舶状态（7预排）
+//     */
+//    @TableField(value = "SHIP_STATUS_NAME",updateStrategy= FieldStrategy.NOT_NULL)
+//    private String shipStatusName;
 
     /**
      *船号 能够判断是否引入船期
@@ -134,6 +135,12 @@ public class BizShipPrePlan extends BizBaseEntity {
      */
     @TableField(value = "EXPECT_BERTH_TIME",updateStrategy= FieldStrategy.NOT_NULL)
     private LocalDateTime expectBerthTime;
+
+    /**
+     *预计离泊时间
+     */
+    @TableField(value = "EXPECT_UNBERTH_TIME",updateStrategy= FieldStrategy.NOT_NULL)
+    private LocalDateTime expectUnberthTime;
 
     /**
      *开工时间

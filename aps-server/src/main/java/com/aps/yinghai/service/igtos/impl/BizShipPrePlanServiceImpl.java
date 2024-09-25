@@ -3,6 +3,7 @@ package com.aps.yinghai.service.igtos.impl;
 import com.aps.yinghai.config.datasource.DataSourceFlag;
 import com.aps.yinghai.constant.IGTOSConstant;
 import com.aps.yinghai.enums.DataSourceFlagEnum;
+import com.aps.yinghai.enums.ShipStatusEnum;
 import com.aps.yinghai.iGTOS.BizShipPrePlan;
 import com.aps.yinghai.mapper.igtos.BizShipPrePlanMapper;
 import com.aps.yinghai.service.igtos.IBizShipPrePlanService;
@@ -28,7 +29,7 @@ public class BizShipPrePlanServiceImpl extends ServiceImpl<BizShipPrePlanMapper,
     public List<BizShipPrePlan> listShipPrePlanAfterTime(LocalDateTime createTime) {
 
         LambdaQueryWrapper<BizShipPrePlan> queryWrapper = Wrappers.lambdaQuery(BizShipPrePlan.class).gt(BizShipPrePlan::getCreateDate, createTime)
-                .eq(BizShipPrePlan::getShipStatus, IGTOSConstant.ShipStatusConst.TO_BE_PRE_PLAN);
+                .eq(BizShipPrePlan::getShipStatus, ShipStatusEnum.PRE_PLAN.getCode());
         return this.list(queryWrapper);
     }
 }

@@ -3,6 +3,7 @@ package com.aps.yinghai.service;
 import com.aps.yinghai.entity.ShipForecast;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -21,4 +22,12 @@ public interface IShipForecastService extends IService<ShipForecast> {
      * @param includeAbsentProcedure
      */
     List<ShipForecast> listNotPlanningShip(Integer includeAbsentProcedure);
+
+    /**
+     * 获取下一昼夜的预计划
+     * @param startTime
+     * @param secondEndTime
+     * @return
+     */
+    List<ShipForecast> listShipForecastByTimeRange(LocalDateTime startTime, LocalDateTime secondEndTime);
 }

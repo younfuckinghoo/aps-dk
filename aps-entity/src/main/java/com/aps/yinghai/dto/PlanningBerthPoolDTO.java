@@ -1,6 +1,7 @@
 package com.aps.yinghai.dto;
 
 import com.aps.yinghai.entity.BollardInfo;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
@@ -59,6 +60,11 @@ public class PlanningBerthPoolDTO {
     public List<PlanningBerthDTO> getBerthByBerthNo(List<String> berthNoList){
         List<PlanningBerthDTO> result = this.berthDTOList.stream().filter(t -> berthNoList.stream().anyMatch(berthNo->StringUtils.equals(berthNo,t.getBerthInfo().getBerthNo()))).collect(Collectors.toList());
         return result;
+    }
+
+    public PlanningBerthDTO getBerthByBerthNo(@NotNull  String berthNo){
+        Optional<PlanningBerthDTO> berthDTO = this.berthDTOList.stream().filter(t -> berthNo.equals(t.getBerthInfo().getBerthNo())).findFirst();
+        return berthDTO.get();
     }
 
 

@@ -39,4 +39,13 @@ public class PlanSchedulingController {
     }
 
 
+    @Operation(summary = "昼夜计划排产")
+    @PostMapping("dayNight")
+    @ApiResponse(responseCode = "200", description = "成功",
+            content = {@Content(mediaType = "application/json")})
+    public Result<List> schedulingDayNight(){
+        return Result.ok(planSchedulingService.dayNightScheduling(), List.class);
+    }
+
+
 }

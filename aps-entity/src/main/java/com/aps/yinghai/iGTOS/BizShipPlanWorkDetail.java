@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @Data
 @TableName("BIZ_SHIP_PRE_PLAN_WORK_RELATION")
-public class BizShipPlanWorkDetail extends BizBaseEntity {
+public class BizShipPlanWorkDetail {
 
     @TableId("ID")
     private String id;
@@ -26,7 +26,7 @@ public class BizShipPlanWorkDetail extends BizBaseEntity {
     private Integer ticketNum;
 
     /**
-     * 估水时间
+     * 估水时间 MM-dd HH:mm
      */
     @TableField("WATER_ESTIMATION_TIME")
     private String waterEstimationTime;

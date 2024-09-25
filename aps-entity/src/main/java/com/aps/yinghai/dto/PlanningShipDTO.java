@@ -1,6 +1,7 @@
 package com.aps.yinghai.dto;
 
 import com.aps.yinghai.entity.ShipForecast;
+import com.aps.yinghai.entity.ShipWorkingInfoDetail;
 import com.aps.yinghai.entity.ShipWorkingSequence;
 import com.aps.yinghai.enums.LoadUnloadEnum;
 import com.aps.yinghai.enums.MachineTypeEnum;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class PlanningShipDTO {
     private ShipForecast shipForecast;
     private List<ShipWorkingSequence> shipWorkingSequences;
+    private List<ShipWorkingInfoDetail> workingInfoDetailList;
     /**
      * 载重吨数
      */
@@ -88,6 +90,19 @@ public class PlanningShipDTO {
     }
 
 
+    public static PlanningShipDTO packageDayNightShip(ShipForecast shipForecast, List<ShipWorkingSequence> shipWorkingSequences, List<ShipWorkingInfoDetail> workingInfoDetailList) {
+        PlanningShipDTO planningShipDTO = new PlanningShipDTO();
+        planningShipDTO.setShipForecast(shipForecast);
+
+        planningShipDTO.setShipWorkingSequences(shipWorkingSequences);
+        planningShipDTO.setWorkingInfoDetailList(workingInfoDetailList);
+        planningShipDTO.setStartTime(shipForecast.getStartTime());
+        planningShipDTO.setTotalQty(shipForecast.getLoadQty());
+
+        return planningShipDTO;
+    }
+
+
     public boolean lengthMoreThan289() {
         boolean flag = this.shipForecast.getShipLength().compareTo(BigDecimal.valueOf(289)) >= 0;
         return flag;
@@ -104,7 +119,17 @@ public class PlanningShipDTO {
      * @return
      */
     public boolean draftMoreThan18_3() {
-        boolean flag = this.shipForecast.getDraft().compareTo(new BigDecimal("18.3")) > 0;
+        BigDecimal arriveDraught = this.shipForecast.getArriveDraught();
+
+//        if (this.shipForecast.getArriveStartWater()!=null){
+//
+//        }
+//        double max = Math.max(Math.max(this.shipForecast.getArriveStartWater().doubleValue(), this.shipForecast.getArriveEndWater().doubleValue()), this.shipForecast.getMiddleWater().doubleValue());
+//        if (max>0){
+//            arriveDraught = BigDecimal.valueOf(max);
+//        }
+        if (arriveDraught==null) return false;
+        boolean flag = arriveDraught.compareTo(new BigDecimal("18.3")) > 0;
         return flag;
     }
 
@@ -116,13 +141,14 @@ public class PlanningShipDTO {
     public boolean planning() {
         MachineTypeEnum machineTypeEnum = null;
         Integer machineCount = 0;
-
-
+        shipForecast.setShipcabinQty(0);
+BigDecimal ttlWeight = BigDecimal.ZERO;
         // 循环卸序 匹配固机类型、数量、工时
         for (ShipWorkingSequence shipWorkingSequence : this.shipWorkingSequences) {
+            ttlWeight = ttlWeight.add(shipWorkingSequence.getTotalWeight());
             BigDecimal singleShipWorkHourQty = shipWorkingSequence.getSingleShipWorkHourQty();
             List<Integer> cabinNoList = Arrays.stream(shipWorkingSequence.getShipCabinNo().split(",")).map(Integer::valueOf).collect(Collectors.toList());
-
+            shipForecast.setShipcabinQty(shipForecast.getShipcabinQty()+cabinNoList.size());
             if (this.occupiedBerth.isD1()) {
                 List<Integer> gaps = new ArrayList<>();
                 machineCount = twoMachinePerCabin(cabinNoList, gaps);
@@ -148,22 +174,24 @@ public class PlanningShipDTO {
             }
             shipWorkingSequence.setMachineCount(machineCount);
             shipWorkingSequence.setMachineTypeCode(machineTypeEnum.getCode());
-            BigDecimal workHour = shipWorkingSequence.getTotalWeight().divide(singleShipWorkHourQty).divide(BigDecimal.valueOf(machineCount), 1, RoundingMode.CEILING);
+            BigDecimal workHour = shipWorkingSequence.getTotalWeight().divide(singleShipWorkHourQty,2, RoundingMode.HALF_UP).divide(BigDecimal.valueOf(machineCount), 1, RoundingMode.CEILING);
             shipWorkingSequence.setWorkHours(workHour);
         }
+
+        totalQty = ttlWeight;
 
         // 工作时长 小时
         BigDecimal totalWorkHour = shipWorkingSequences.stream().map(t -> t.getWorkHours()).reduce(BigDecimal.ZERO, (w1, w2) -> w1.add(w2));
         this.shipWorkingDuration = totalWorkHour;
         // 整船平均舱时量
-        BigDecimal shipAvgCapacityPerHour = this.totalQty.divide(totalWorkHour);
+        BigDecimal shipAvgCapacityPerHour = this.totalQty.divide(totalWorkHour,2, RoundingMode.CEILING);
         this.shipForecast.setCapacityPerHour(shipAvgCapacityPerHour);
 
         // 工作时间转换为分钟
         BigDecimal durationMinute = totalWorkHour.multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.CEILING);
 
         // 水尺时间
-        Integer middleWaterNum = this.shipForecast.getMiddleWaterNum();
+        Integer middleWaterNum = this.shipForecast.getMiddleWaterNum()==null?0:this.shipForecast.getMiddleWaterNum();
         // 每次水尺1.5小时
         BigDecimal middleWaterDuration = BigDecimal.valueOf(middleWaterNum).multiply(new BigDecimal("1.5")).multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.CEILING);
 
@@ -279,6 +307,19 @@ public class PlanningShipDTO {
         this.leaveTime = null;
         this.occupiedBerth = null;
         this.occupiedBollardList = null;
+
+    }
+
+    /**
+     * 是否排好
+     * 1.都已排完 没有剩余工作吨数
+     * 2.没排完，但是剩余工作的开始时间已经大于等于这个昼夜的最后时间，
+     * 3.
+     * @return
+     */
+    public boolean dayNightPlanDone(LocalDateTime endTime){
+        boolean noWeight = this.shipWorkingSequences.stream().allMatch(t -> BigDecimal.ZERO.equals(t.getTotalWeight()));
+      return noWeight || endTime.compareTo(startTime) <= 0;
 
     }
 }

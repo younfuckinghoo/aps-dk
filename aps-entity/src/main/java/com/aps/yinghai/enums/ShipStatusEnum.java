@@ -3,15 +3,14 @@ package com.aps.yinghai.enums;
 import com.aps.yinghai.base.BaseEnum;
 import com.aps.yinghai.exception.NotFindEnumException;
 
-public enum TradeTypeEnum implements BaseEnum {
-    IN(1, "内贸"),
-    OUT(0, "外贸");
+public enum ShipStatusEnum implements BaseEnum {
+    PRE_PLAN(7,"预排");
 
 
     private int code;
     private String name;
 
-    TradeTypeEnum(int code, String name) {
+    ShipStatusEnum(int code, String name){
         this.code = code;
         this.name = name;
     }
@@ -26,9 +25,9 @@ public enum TradeTypeEnum implements BaseEnum {
         return name;
     }
 
-    public static TradeTypeEnum getInstanceByCode(int code) {
-        TradeTypeEnum[] values = TradeTypeEnum.values();
-        for (TradeTypeEnum value : values) {
+    public static ShipStatusEnum getInstanceByCode(int code){
+        ShipStatusEnum[] values = ShipStatusEnum.values();
+        for (ShipStatusEnum value : values) {
             if (value.getCode() == code)
                 return value;
         }

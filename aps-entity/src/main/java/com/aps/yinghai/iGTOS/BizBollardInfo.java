@@ -19,11 +19,11 @@ public class BizBollardInfo extends BizBaseEntity {
     @TableField("BERTH_ID")
     private String berthId;
 
-    /**
-     * 泊位编号
-     */
-    @TableField("BERTH_NO")
-    private String berthNo;
+//    /**
+//     * 泊位编号
+//     */
+//    @TableField("BERTH_NO")
+//    private String berthNo;
 
     /**
      * 缆桩编号
