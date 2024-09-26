@@ -163,12 +163,12 @@ public class PlanSchedulingServiceImpl implements IPlanSchedulingService {
             availableShipList.addAll(shipMoreThan300);
             availableShipList.addAll(shipLessThan300);
 
-            index = 0;
+            int shipIdx = 0;
             // 差值
             int cha = availableShipList.size() - 1;
             availableLoop:
             do {
-                PlanningShipDTO planningShipDTO = availableShipList.get(index);
+                PlanningShipDTO planningShipDTO = availableShipList.get(shipIdx);
                 planningShipDTO.setReadyTime(planningTime);
 
                 // 大于300米 吃水超过18.5 必须选择D1
@@ -220,6 +220,8 @@ public class PlanSchedulingServiceImpl implements IPlanSchedulingService {
                         // 回写榄桩占用时间 只有上一步设置了离泊时间才能决定这些缆柱占用到什么时候
                         this.rewriteBollardOccupyTime(candidateBollardDTOList, planningShipDTO.getOccupiedBollardList());
                         planningShipDTO.setPlaned(true);
+                        // 每条靠泊的船靠泊时间至少间隔1小时
+                        index++;
                         atomicInteger.getAndDecrement();
 
                     } else {
@@ -230,21 +232,21 @@ public class PlanSchedulingServiceImpl implements IPlanSchedulingService {
 
 
 
-                int nextIdx = index + cha;
+                int nextIdx = shipIdx + cha;
                 PlanningShipDTO nextDTO = availableShipList.get(nextIdx);
                 if (nextDTO.getShipForecast().getId().equals(planningShipDTO.getShipForecast().getId()))break ;
                 // 只有一种装卸类型
                 if (nextDTO.getShipForecast().getLoadUnload() == planningShipDTO.getShipForecast().getLoadUnload()) {
                     if (cha > 0) {
                         cha--;
-                        index++;
+                        shipIdx++;
                     } else {
                         cha++;
-                        index--;
+                        shipIdx--;
                     }
                 } else {
                     // 现根据差计算新的下标
-                    index = index + cha;
+                    shipIdx = shipIdx + cha;
                     // 更新计算新的差
                     if (cha > 0) {
                         cha--;
