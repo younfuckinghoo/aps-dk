@@ -7,7 +7,8 @@ import com.aps.yinghai.dto.PlanningShipDTO;
 import com.aps.yinghai.dto.igtos.BizDayNightClassDTO;
 import com.aps.yinghai.dto.igtos.BizShipWorkPlanDTO;
 import com.aps.yinghai.entity.*;
-import com.aps.yinghai.enums.ShipStatusEnum;
+import com.aps.yinghai.enums.LoadUnloadEnum;
+import com.aps.yinghai.exception.ObjectCloneException;
 import com.aps.yinghai.exception.ProgramCalculationException;
 import com.aps.yinghai.iGTOS.BizDaynightClassPlan;
 import com.aps.yinghai.iGTOS.BizShipPrePlan;
@@ -21,7 +22,6 @@ import com.aps.yinghai.service.igtos.IBizShipWorkPlanService;
 import com.aps.yinghai.service.igtos.IBizShipWorkSequenceService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -140,10 +140,22 @@ public class PlanSchedulingServiceImpl implements IPlanSchedulingService {
             List<PlanningShipDTO> shipMoreThan300 = availableShipList.stream().filter(t -> t.lengthMoreThan300()).sorted((s1, s2) -> s2.getTotalQty().compareTo(s1.getTotalQty())).collect(Collectors.toList());
             // 小于300米的
             List<PlanningShipDTO> shipLessThan300 = availableShipList.stream().filter(t -> !t.lengthMoreThan300()).sorted((s1, s2) -> {
-                int compare = s1.getShipForecast().getExpectArriveTime().compareTo(s1.getShipForecast().getExpectArriveTime());
+                // 现根据卸-装排序 装卸类型一样则根据卸（正序）、装（倒序）排序
+                int compare = s2.getShipForecast().getLoadUnload() - s1.getShipForecast().getLoadUnload();
                 if (compare == 0) {
-                    return s2.getTotalQty().compareTo(s1.getTotalQty());
+                    if (LoadUnloadEnum.LOAD.getCode() == s1.getShipForecast().getLoadUnload()) {
+                        return s1.getShipForecast().getExpectArriveTime().compareTo(s2.getShipForecast().getExpectArriveTime());
+                    } else {
+                        return s2.getShipForecast().getExpectArriveTime().compareTo(s1.getShipForecast().getExpectArriveTime());
+                    }
                 }
+                //s1.getShipForecast().getExpectArriveTime().compareTo(s1.getShipForecast().getExpectArriveTime());
+//                if (compare == 0) {
+//                    return s2.getTotalQty().compareTo(s1.getTotalQty());
+//                }
+//                return compare;
+//                LoadUnloadEnum.UNLOAD
+
                 return compare;
 
             }).collect(Collectors.toList());
@@ -151,72 +163,102 @@ public class PlanSchedulingServiceImpl implements IPlanSchedulingService {
             availableShipList.addAll(shipMoreThan300);
             availableShipList.addAll(shipLessThan300);
 
+            index = 0;
+            // 差值
+            int cha = availableShipList.size() - 1;
             availableLoop:
-            for (PlanningShipDTO planningShipDTO : availableShipList) {
+            do {
+                PlanningShipDTO planningShipDTO = availableShipList.get(index);
                 planningShipDTO.setReadyTime(planningTime);
 
-                // 大于289米选择D1 吃水超过18.3
-                if (planningShipDTO.lengthMoreThan289() || planningShipDTO.draftMoreThan18_3()) {
+                // 大于300米 吃水超过18.5 必须选择D1
+                if (planningShipDTO.lengthMoreThan300() || planningShipDTO.draftMoreThan18_5()) {
                     PlanningBerthDTO d1Berth = planningBerthPoolDTO.getD1Berth(planningShipDTO.getReadyTime());
                     // 如果能排上
                     if (d1Berth != null) {
+                        List<PlanningBollardDTO> bollardDTOList = d1Berth.getBollardDTOList();
+                        boolean updateBerth = this.planningBollard(bollardDTOList, planningShipDTO, 1, true);
+                        // 排上了
+                        if (updateBerth) {
+
+                            // 设置泊位
+                            planningShipDTO.setOccupiedBerth(d1Berth);
+                            // 根据舱时量计算工作时间 计算靠泊时间、开工时间、完工时间、离泊时间
+                            planningShipDTO.planning();
+                            // 回写榄桩占用时间 只有上一步设置了离泊时间才能决定这些缆柱占用到什么时候
+                            this.rewriteBollardOccupyTime(d1Berth.getBollardDTOList(), planningShipDTO.getOccupiedBollardList());
+                            planningShipDTO.setPlaned(true);
+                            // 每条靠泊的船靠泊时间至少间隔1小时
+                            index++;
+                            atomicInteger.getAndDecrement();
+                        } else {
+                            // 未排上 清除数据
+                            planningShipDTO.clearPlanData();
+                        }
+
+                    }
+
+                }else{
+                    List<String> berthNoList = new ArrayList<>();
+                    List<PlanningBerthDTO> tradeBerthDTOList;
+                    List<PlanningBollardDTO> candidateBollardDTOList;
+                    // 根据装卸类型、内外贸类型决定如何选泊位
+                    Boolean sortAsc = findPlanningBerthNo(planningShipDTO, berthNoList);
+                    // 2.根据备选泊位集合安排缆柱，设置planningShipDTO的占用缆柱集合
+                    candidateBollardDTOList = listCandidateBollardByBerthNo(planningBerthPoolDTO,sortAsc,berthNoList);
+                    //  3.开始进行排缆柱
+                    boolean updateBerth = this.planningBollard(candidateBollardDTOList, planningShipDTO, 0, sortAsc);
+                    // 排上了
+                    if (updateBerth) {
+
+                        // 设置泊位
+                        // 5.根据缆柱确定泊位
+                        PlanningBerthDTO d1Berth = determinantBerth(planningBerthPoolDTO,planningShipDTO.getOccupiedBollardList());
                         planningShipDTO.setOccupiedBerth(d1Berth);
-                        // 根据舱时量计算工作时间 计算靠泊时间、开工时间、完工时间、离泊时间
+                        // planningShipDTO根据泊位设置船和卸序的机器占用情况（线数、机械类型编码）、根据舱时量计算工作时间 计算靠泊时间、开工时间、完工时间、离泊时间
                         planningShipDTO.planning();
-                        // 更新泊位数据，更新榄桩占用时间
-                        boolean updateBerth = d1Berth.updateBerth(planningShipDTO, 1);
-                        // 排上了
-                        if (updateBerth) {
-                            planningShipDTO.setPlaned(true);
-                            atomicInteger.getAndDecrement();
-                        } else {
-                            // 未排上 清除数据
-                            planningShipDTO.clearPlanData();
-                        }
+                        // 回写榄桩占用时间 只有上一步设置了离泊时间才能决定这些缆柱占用到什么时候
+                        this.rewriteBollardOccupyTime(candidateBollardDTOList, planningShipDTO.getOccupiedBollardList());
+                        planningShipDTO.setPlaned(true);
+                        atomicInteger.getAndDecrement();
 
-                    }
-                    // 如果排不上就不排了 如果D1排不上就去2-5则注掉continue
-                    continue availableLoop;
-                }
-
-
-                List<PlanningBerthDTO> tradeBerthDTOList;
-                // 内贸
-                if (planningShipDTO.isInTrade()) {
-                    List<String> nos = new ArrayList<>();
-                    nos.add("D4");
-                    // D5吃水不超过16.2
-                    if (planningShipDTO.getShipForecast().getArriveDraught() == null || planningShipDTO.getShipForecast().getArriveDraught().compareTo(new BigDecimal("16.2")) < 1) {
-                        nos.add("D5");
-                    }
-                    tradeBerthDTOList = planningBerthPoolDTO.getBerthByBerthNo(nos);
-                } else {// 外贸
-                    tradeBerthDTOList = planningBerthPoolDTO.getBerthByBerthNo(Arrays.asList("D2", "D3"));
-
-                }
-                if (!CollectionUtils.isEmpty(tradeBerthDTOList)) {
-                    selectedBerthLoop:
-                    for (PlanningBerthDTO planningBerthDTO : tradeBerthDTOList) {
-                        planningShipDTO.setOccupiedBerth(planningBerthDTO);
-                        // 根据舱时量计算工作时间 计算靠泊时间、开工时间、完工时间、离泊时间
-                        planningShipDTO.planning();
-                        // 更新泊位数据，更新榄桩占用时间
-                        boolean updateBerth = planningBerthDTO.updateBerth(planningShipDTO, 0);
-                        // 排上了
-                        if (updateBerth) {
-                            planningShipDTO.setPlaned(true);
-                            atomicInteger.getAndDecrement();
-                            // 排下一条船
-                            continue availableLoop;
-                        } else {
-                            // 未排上 清除数据
-                            planningShipDTO.clearPlanData();
-                        }
+                    } else {
+                        // 未排上 清除数据
+                        planningShipDTO.clearPlanData();
                     }
                 }
 
 
-            }
+
+                int nextIdx = index + cha;
+                PlanningShipDTO nextDTO = availableShipList.get(nextIdx);
+                if (nextDTO.getShipForecast().getId().equals(planningShipDTO.getShipForecast().getId()))break ;
+                // 只有一种装卸类型
+                if (nextDTO.getShipForecast().getLoadUnload() == planningShipDTO.getShipForecast().getLoadUnload()) {
+                    if (cha > 0) {
+                        cha--;
+                        index++;
+                    } else {
+                        cha++;
+                        index--;
+                    }
+                } else {
+                    // 现根据差计算新的下标
+                    index = index + cha;
+                    // 更新计算新的差
+                    if (cha > 0) {
+                        cha--;
+                        cha = 0 - cha;
+                    } else {
+                        cha++;
+                        cha = 0 - cha;
+                    }
+
+                }
+
+
+            } while (cha != 0);
+
 
 
             // 每次进入都要+1小时
@@ -232,6 +274,219 @@ public class PlanSchedulingServiceImpl implements IPlanSchedulingService {
 
 
         return shipDTOList;
+
+
+    }
+
+    /**
+     * 根据榄桩数量在哪个泊位上多决定归属于哪个泊位
+     * @param planningBerthPoolDTO
+     * @param occupiedBollardList
+     * @return
+     */
+    private PlanningBerthDTO determinantBerth(PlanningBerthPoolDTO planningBerthPoolDTO, List<PlanningBollardDTO> occupiedBollardList) {
+        Map<String, Long> berthNoMap = occupiedBollardList.stream().map(t -> t.getBollardInfo()).collect(Collectors.groupingBy(t -> t.getBerthNo(), Collectors.counting()));
+        Set<Map.Entry<String, Long>> entries = berthNoMap.entrySet();
+        String berthNo = "";int count = 0;
+        for (Map.Entry<String, Long> entry : entries) {
+            if (entry.getValue()>count) {
+                count = entry.getValue().intValue();
+                berthNo = entry.getKey();
+            }
+        }
+        return planningBerthPoolDTO.getBerthByBerthNo(berthNo);
+
+    }
+
+    private List<PlanningBollardDTO> listCandidateBollardByBerthNo(PlanningBerthPoolDTO planningBerthPoolDTO, Boolean sortAsc, List<String> berthNoList) {
+        List<PlanningBollardDTO> result = new ArrayList<>();
+        for (String berthNo : berthNoList) {
+            PlanningBerthDTO planningBerthDTO = planningBerthPoolDTO.getBerthByBerthNo(berthNo);
+            List<PlanningBollardDTO> bollardDTOList = planningBerthDTO.getBollardDTOList();
+            List<PlanningBollardDTO> collect = bollardDTOList.stream().sorted((b1, b2) -> {
+                if (sortAsc)
+                    return b1.getBollardInfo().getBollardNo() - b2.getBollardInfo().getBollardNo();
+                else
+                    return b2.getBollardInfo().getBollardNo() - b1.getBollardInfo().getBollardNo();
+            }).collect(Collectors.toList());
+            result.addAll(collect);
+        }
+        return result;
+    }
+
+    private boolean findPlanningBerthNo(PlanningShipDTO planningShipDTO, List<String> nos) {
+        boolean sortAsc;
+        //  要优先安排卸船到D2\D3 因为只有安排的D2\D3的卸船才能判断有没有未被安排的卸船
+        // 外贸卸船优先 D2 D3
+        if (planningShipDTO.isUnLoad()) {
+            sortAsc = true;
+            // 卸船外贸
+            if (planningShipDTO.isOutTrade()) {
+                nos.add("D2");
+                nos.add("D3");
+                nos.add("D1");
+            } else {
+                nos.add("D2");
+                nos.add("D3");
+                if (planningShipDTO.lengthMoreThan289() || planningShipDTO.draftMoreThan18_3()) {
+                    nos.add(0, "D1");
+                } else {
+                    nos.add("D1");
+                }
+            }
+            nos.add("D4");
+            nos.add("D5");
+
+        } else {
+            sortAsc = false;
+            nos.add("D5");
+            nos.add("D4");
+            nos.add("D3");
+            nos.add("D2");
+            nos.add("D1");
+        }
+        return sortAsc;
+    }
+
+    /**
+     * 回写榄桩的被占用时间
+     *
+     * @param availableBollardList
+     * @param planedBollardList
+     */
+    private void rewriteBollardOccupyTime(List<PlanningBollardDTO> availableBollardList, List<PlanningBollardDTO> planedBollardList) {
+        // 将被占用的缆柱更新到原始数据上
+        Map<String, PlanningBollardDTO> bollardDTOMap = availableBollardList.stream().collect(Collectors.toMap(t -> t.getBollardInfo().getId(), t -> t));
+
+        planedBollardList.forEach(changed -> {
+            String id = changed.getBollardInfo().getId();
+            PlanningBollardDTO original = bollardDTOMap.get(id);
+
+            if (original != null)
+                original.getBollardInfo().setOccupyUntil(changed.getBollardInfo().getOccupyUntil());
+        });
+    }
+
+
+    private boolean planningBollard(List<PlanningBollardDTO> bollardDTOList, PlanningShipDTO planningShipDTO, int skipNum, boolean asc) {
+
+        List<PlanningBollardDTO> cloneBollardList = bollardDTOList.stream()
+//                .sorted((t1, t2) -> {if (asc) return t1.getBollardInfo().getBollardNo() - t2.getBollardInfo().getBollardNo();else return t2.getBollardInfo().getBollardNo() - t1.getBollardInfo().getBollardNo();        })
+                .skip(skipNum)
+                .map(t -> {
+                    try {
+                        return (PlanningBollardDTO) t.cloneObj();
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                        throw new ObjectCloneException("排产缆柱数据失败！", e);
+                    }
+                }).collect(Collectors.toList());
+
+        // 船舶长度120%
+        BigDecimal shipRequireLength = planningShipDTO.getShipForecast().getShipLength().multiply(new BigDecimal("1.2"));
+        int occupiedAmount = 0;
+        List<PlanningBollardDTO> candidateBollardList = new ArrayList<>();
+        // 当前所有占用的缆柱长度
+        BigDecimal totalLength = BigDecimal.ZERO;
+        // 是否已安排
+        boolean planned = false;
+
+        seek:
+        for (int i = 0; i < cloneBollardList.size(); ) {
+            PlanningBollardDTO planningBollardDTO = cloneBollardList.get(i);
+            // 找到第一个空闲的缆柱
+            boolean free = planningBollardDTO.isFree(planningShipDTO.getReadyTime());
+
+            if (free) {
+                // 每次开始匹配是否满足长度时都要初始化还原占用数据
+                totalLength = BigDecimal.ZERO;
+                candidateBollardList.clear();
+                occupiedAmount = 0;
+
+                plan:
+                for (int j = i; j < cloneBollardList.size(); j++) {
+                    PlanningBollardDTO freeBollard = cloneBollardList.get(j);
+                    // 不管是被占用还是未被占用，都先加上
+                    candidateBollardList.add(freeBollard);
+                    // 累加缆柱与前一个缆柱的长度
+                    totalLength = totalLength.add(freeBollard.getBollardInfo().getLastBollardDistance());
+                    if (totalLength.compareTo(shipRequireLength) > 0) {
+                        // 如果不是从第一个榄桩开始排的，那么可以将船的艏缆系到前一个被占用的缆上
+                        if (asc) {
+                            if (i > 0) {
+                                PlanningBollardDTO firstBollard = cloneBollardList.get(i - 1);
+                                candidateBollardList.add(0, firstBollard);
+                            }
+                        } else {
+                            PlanningBollardDTO lastBollard = cloneBollardList.get(j + 1);
+                            candidateBollardList.add(lastBollard);
+                        }
+
+
+                        planned = true;
+
+                    }
+                    // 如果安排好了 停止查找
+                    if (planned) {
+                        break seek;
+                    }
+
+                    // 如果是空闲的
+                    if (freeBollard.isFree(planningShipDTO.getReadyTime())) {
+                        occupiedAmount++;
+                        // 如果是空闲的则优先向后找本泊位的空闲缆柱
+                        continue plan;
+                    } else {
+
+                        if (asc && i > 1) {
+                            // 向前交叉一根缆柱
+                            totalLength = totalLength.add(cloneBollardList.get(i - 1).getBollardInfo().getLastBollardDistance());
+                            // 向前交叉一根满足的话
+                            if (totalLength.compareTo(shipRequireLength) > 0) {
+                                // 前一根和交叉的那根都要被占用
+                                PlanningBollardDTO firstBollard = cloneBollardList.get(i - 2);
+                                PlanningBollardDTO secondBollard = cloneBollardList.get(i - 1);
+                                candidateBollardList.add(0, secondBollard);
+                                candidateBollardList.add(0, firstBollard);
+
+                                planned = true;
+                                break seek;
+                            }
+                        } else if (!asc && i > 1) {
+                            // 如果是倒序向后交叉一根缆柱
+                            totalLength = totalLength.add(cloneBollardList.get(i - 1).getBollardInfo().getLastBollardDistance());
+                            if (totalLength.compareTo(shipRequireLength) > 0) {
+                                // 前一根要被占用
+                                PlanningBollardDTO lastBollard = cloneBollardList.get(i - 1);
+                                candidateBollardList.add(0, lastBollard);
+                                planned = true;
+                                break seek;
+                            }
+                        }
+                        break plan;
+
+                    }
+
+                }
+
+                if (planned) break seek;
+
+                // 前面安排的缆柱长度加起来不够 直接跳过
+                i += occupiedAmount;
+
+            }
+
+            i++;
+
+        }
+
+
+        if (planned) {
+            planningShipDTO.setOccupiedBollardList(candidateBollardList);
+            return true;
+        } else {
+            return false;
+        }
 
 
     }
@@ -324,16 +579,16 @@ public class PlanSchedulingServiceImpl implements IPlanSchedulingService {
         // 第二个班结束时间
         LocalDateTime secondEndTime = firstEndTime.plusHours(12);
         // 获取靠泊时间小于下一个夜昼结束6点的所有预计划
-        List<ShipForecast> shipForecastList = iShipForecastService.listShipForecastByTimeRange(startTime ,secondEndTime);
+        List<ShipForecast> shipForecastList = iShipForecastService.listShipForecastByTimeRange(startTime, secondEndTime);
         List<String> shipForecastIdList = shipForecastList.stream().map(t -> t.getId()).collect(Collectors.toList());
         // 获取与计划的卸序子表
         List<ShipWorkingSequence> shipWorkingSequences = this.iShipWorkingSequenceService.listByShipForecastIdList(shipForecastIdList);
         Map<String, List<ShipWorkingSequence>> sequenceListMap = shipWorkingSequences.stream().collect(Collectors.groupingBy(t -> t.getShipForecastId(), Collectors.toList()));
         // 获取作业详情子表
-        List<ShipWorkingInfoDetail> workingInfoDetailList  = this.iShipWorkingInfoDetailService.listByShipForecastIdList(shipForecastIdList);
+        List<ShipWorkingInfoDetail> workingInfoDetailList = this.iShipWorkingInfoDetailService.listByShipForecastIdList(shipForecastIdList);
         Map<String, List<ShipWorkingInfoDetail>> workingInfoListMap = workingInfoDetailList.stream().collect(Collectors.groupingBy(t -> t.getShipForecastId(), Collectors.toList()));
         // 创建昼夜计划包装列表
-        List<PlanningShipDTO> dayNightShipDTOList = shipForecastList.stream().map(t -> PlanningShipDTO.packageDayNightShip(t, sequenceListMap.get(t.getId()), workingInfoListMap.get(t.getId()))).sorted((a,b)->a.getShipForecast().getStartTime().compareTo(b.getShipForecast().getStartTime())).collect(Collectors.toList());
+        List<PlanningShipDTO> dayNightShipDTOList = shipForecastList.stream().map(t -> PlanningShipDTO.packageDayNightShip(t, sequenceListMap.get(t.getId()), workingInfoListMap.get(t.getId()))).sorted((a, b) -> a.getShipForecast().getStartTime().compareTo(b.getShipForecast().getStartTime())).collect(Collectors.toList());
 
 
         // 获取所有可用的系缆柱
@@ -348,9 +603,9 @@ public class PlanSchedulingServiceImpl implements IPlanSchedulingService {
         DayNightPlanner dayNightPlanner = new DayNightPlanner(startTime, firstEndTime, secondEndTime, planningBerthPoolDTO, bollardInfoList);
         for (PlanningShipDTO planningShipDTO : dayNightShipDTOList) {
             // 一直到这条船排完
-            do{
+            do {
                 dayNightPlanner.planningClass(planningShipDTO);
-            }while (!planningShipDTO.dayNightPlanDone(secondEndTime));
+            } while (!planningShipDTO.dayNightPlanDone(secondEndTime));
 
 
         }
@@ -362,15 +617,15 @@ public class PlanSchedulingServiceImpl implements IPlanSchedulingService {
             BizShipWorkPlan plan = bizShipWorkPlanDTO.getPlan();
             BizDayNightClassDTO dayClass = bizShipWorkPlanDTO.getDayClass();
             BizDayNightClassDTO nightClass = bizShipWorkPlanDTO.getNightClass();
-            if (dayClass!=null)
-            workPlanClassList.add(dayClass.getClassPlan());
-            if (nightClass!=null)
-            workPlanClassList.add(nightClass.getClassPlan());
+            if (dayClass != null)
+                workPlanClassList.add(dayClass.getClassPlan());
+            if (nightClass != null)
+                workPlanClassList.add(nightClass.getClassPlan());
             BigDecimal planWeight = BigDecimal.ZERO;
-            if (dayClass!=null){
+            if (dayClass != null) {
                 planWeight = planWeight.add(dayClass.getClassPlan().getPlanWeight());
             }
-            if (nightClass!=null){
+            if (nightClass != null) {
                 planWeight = planWeight.add(nightClass.getClassPlan().getPlanWeight());
             }
             plan.setPlanWeight(planWeight);
@@ -399,9 +654,7 @@ public class PlanSchedulingServiceImpl implements IPlanSchedulingService {
 //        }while (true);
 
 
-
         // 直到达到第二个班次的最后时间点
-
 
 
         return null;

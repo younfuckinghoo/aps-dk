@@ -46,5 +46,9 @@ public class PlanningBollardDTO implements Cloneable{
         return planningBollardDTO;
     }
 
+    public Object cloneObj()throws CloneNotSupportedException {
+        return this.clone();
+    }
+
 
 }

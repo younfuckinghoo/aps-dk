@@ -128,8 +128,28 @@ public class PlanningShipDTO {
 //        if (max>0){
 //            arriveDraught = BigDecimal.valueOf(max);
 //        }
-        if (arriveDraught==null) return false;
+        if (arriveDraught == null) return false;
         boolean flag = arriveDraught.compareTo(new BigDecimal("18.3")) > 0;
+        return flag;
+    }
+
+    /**
+     * 吃水超过18.3
+     *
+     * @return
+     */
+    public boolean draftMoreThan18_5() {
+        BigDecimal arriveDraught = this.shipForecast.getArriveDraught();
+
+//        if (this.shipForecast.getArriveStartWater()!=null){
+//
+//        }
+//        double max = Math.max(Math.max(this.shipForecast.getArriveStartWater().doubleValue(), this.shipForecast.getArriveEndWater().doubleValue()), this.shipForecast.getMiddleWater().doubleValue());
+//        if (max>0){
+//            arriveDraught = BigDecimal.valueOf(max);
+//        }
+        if (arriveDraught == null) return false;
+        boolean flag = arriveDraught.compareTo(new BigDecimal("18.5")) > 0;
         return flag;
     }
 
@@ -142,13 +162,13 @@ public class PlanningShipDTO {
         MachineTypeEnum machineTypeEnum = null;
         Integer machineCount = 0;
         shipForecast.setShipcabinQty(0);
-BigDecimal ttlWeight = BigDecimal.ZERO;
+        BigDecimal ttlWeight = BigDecimal.ZERO;
         // 循环卸序 匹配固机类型、数量、工时
         for (ShipWorkingSequence shipWorkingSequence : this.shipWorkingSequences) {
             ttlWeight = ttlWeight.add(shipWorkingSequence.getTotalWeight());
             BigDecimal singleShipWorkHourQty = shipWorkingSequence.getSingleShipWorkHourQty();
             List<Integer> cabinNoList = Arrays.stream(shipWorkingSequence.getShipCabinNo().split(",")).map(Integer::valueOf).collect(Collectors.toList());
-            shipForecast.setShipcabinQty(shipForecast.getShipcabinQty()+cabinNoList.size());
+            shipForecast.setShipcabinQty(shipForecast.getShipcabinQty() + cabinNoList.size());
             if (this.occupiedBerth.isD1()) {
                 List<Integer> gaps = new ArrayList<>();
                 machineCount = twoMachinePerCabin(cabinNoList, gaps);
@@ -174,7 +194,7 @@ BigDecimal ttlWeight = BigDecimal.ZERO;
             }
             shipWorkingSequence.setMachineCount(machineCount);
             shipWorkingSequence.setMachineTypeCode(machineTypeEnum.getCode());
-            BigDecimal workHour = shipWorkingSequence.getTotalWeight().divide(singleShipWorkHourQty,2, RoundingMode.HALF_UP).divide(BigDecimal.valueOf(machineCount), 1, RoundingMode.CEILING);
+            BigDecimal workHour = shipWorkingSequence.getTotalWeight().divide(singleShipWorkHourQty, 2, RoundingMode.HALF_UP).divide(BigDecimal.valueOf(machineCount), 1, RoundingMode.CEILING);
             shipWorkingSequence.setWorkHours(workHour);
         }
 
@@ -184,14 +204,14 @@ BigDecimal ttlWeight = BigDecimal.ZERO;
         BigDecimal totalWorkHour = shipWorkingSequences.stream().map(t -> t.getWorkHours()).reduce(BigDecimal.ZERO, (w1, w2) -> w1.add(w2));
         this.shipWorkingDuration = totalWorkHour;
         // 整船平均舱时量
-        BigDecimal shipAvgCapacityPerHour = this.totalQty.divide(totalWorkHour,2, RoundingMode.CEILING);
+        BigDecimal shipAvgCapacityPerHour = this.totalQty.divide(totalWorkHour, 2, RoundingMode.CEILING);
         this.shipForecast.setCapacityPerHour(shipAvgCapacityPerHour);
 
         // 工作时间转换为分钟
         BigDecimal durationMinute = totalWorkHour.multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.CEILING);
 
         // 水尺时间
-        Integer middleWaterNum = this.shipForecast.getMiddleWaterNum()==null?0:this.shipForecast.getMiddleWaterNum();
+        Integer middleWaterNum = this.shipForecast.getMiddleWaterNum() == null ? 0 : this.shipForecast.getMiddleWaterNum();
         // 每次水尺1.5小时
         BigDecimal middleWaterDuration = BigDecimal.valueOf(middleWaterNum).multiply(new BigDecimal("1.5")).multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.CEILING);
 
@@ -227,6 +247,10 @@ BigDecimal ttlWeight = BigDecimal.ZERO;
                 this.leaveTime = this.endTime.plusMinutes(90);
             }
         }
+
+        // 设置缆柱占用时间
+        this.occupiedBollardList.forEach(t->t.getBollardInfo().setOccupyUntil(this.leaveTime));
+
         return true;
 
     }
@@ -315,11 +339,12 @@ BigDecimal ttlWeight = BigDecimal.ZERO;
      * 1.都已排完 没有剩余工作吨数
      * 2.没排完，但是剩余工作的开始时间已经大于等于这个昼夜的最后时间，
      * 3.
+     *
      * @return
      */
-    public boolean dayNightPlanDone(LocalDateTime endTime){
+    public boolean dayNightPlanDone(LocalDateTime endTime) {
         boolean noWeight = this.shipWorkingSequences.stream().allMatch(t -> BigDecimal.ZERO.equals(t.getTotalWeight()));
-      return noWeight || endTime.compareTo(startTime) <= 0;
+        return noWeight || endTime.compareTo(startTime) <= 0;
 
     }
 }

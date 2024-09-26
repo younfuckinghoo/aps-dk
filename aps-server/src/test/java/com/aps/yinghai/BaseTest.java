@@ -1,5 +1,6 @@
 package com.aps.yinghai;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,7 +8,35 @@ import java.util.stream.Collectors;
 public class BaseTest {
 
     public static void main(String[] args) {
+        test2();
+    }
 
+    public static void test2(){
+        ArrayList<Integer> objects = new ArrayList<>();
+        objects.add(1);
+        objects.add(2);
+        objects.add(3);
+        objects.add(4);
+        List<Integer> collect = objects.stream().sorted((t1, t2) -> t2-t1).collect(Collectors.toList());
+        System.out.println(collect);
+
+    }
+
+    public static void test1(){
+        int a = -2;
+        a++;
+        a = 0-a;
+        System.out.println(a);
+
+    }
+
+    public static void testCalc(){
+        int a = 0 << Integer.SIZE-3;
+        System.out.println(a);
+        System.out.println("------------");
+        int b = 1 << Integer.SIZE-3;
+        System.out.println(b);
+        System.out.println("------------");
     }
 
     public static void testSort(){

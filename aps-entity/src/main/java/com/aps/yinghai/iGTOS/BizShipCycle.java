@@ -128,4 +128,11 @@ public class BizShipCycle extends BizBaseEntity {
      */
     @TableField("DATE_ARRIVE")
     private LocalDateTime dateArrive;
+
+
+    /**
+     * 预抵时间
+     */
+    @TableField("DATE_EXPECTARRIVE")
+    private LocalDateTime dateExpectarrive;
 }

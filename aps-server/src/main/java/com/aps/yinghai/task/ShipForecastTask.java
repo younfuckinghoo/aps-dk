@@ -130,6 +130,9 @@ public class ShipForecastTask {
                     shipForecast.setForwarder(bizShipCycle.getForwarder());
                     shipForecast.setHgfxztIsrelease(bizShipCycle.getHgfxztIsrelease());
                     shipForecast.setDateArrive(bizShipCycle.getDateArrive());
+                    if (bizShipCycle.getDateExpectarrive()!=null){
+                        shipForecast.setExpectArriveTime(bizShipCycle.getDateExpectarrive());
+                    }
 
                     if (bizShipCycle.getReviseDate() != null && bizShipCycle.getReviseDate().isAfter(shipForecast.getReviseDate())) {
                         shipForecast.setReviseDate(bizShipCycle.getReviseDate());
